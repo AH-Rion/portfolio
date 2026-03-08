@@ -11,36 +11,30 @@ const stats = [
 
 const CountUpNumber = ({ target, suffix }: { target: number; suffix: string }) => {
   const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const { isInView } = useScrollAnimationForCounter();
-
-  function useScrollAnimationForCounter() {
-    const ref2 = useRef(null);
-    const [isInView, setIsInView] = useState(false);
-    useEffect(() => {
-      const observer = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setIsInView(true); },
-        { threshold: 0.5 }
-      );
-      const el = ref2.current;
-      if (el) observer.observe(el);
-      return () => { if (el) observer.unobserve(el); };
-    }, []);
-    return { ref: ref2, isInView };
-  }
+  const ref = useRef<HTMLSpanElement>(null);
+  const [started, setStarted] = useState(false);
 
   useEffect(() => {
-    if (!isInView) return;
-    let start = 0;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting && !started) setStarted(true); },
+      { threshold: 0.5 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [started]);
+
+  useEffect(() => {
+    if (!started) return;
+    let startTime = 0;
     const duration = 2000;
     const step = (timestamp: number) => {
-      if (!start) start = timestamp;
-      const progress = Math.min((timestamp - start) / duration, 1);
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
       setCount(Math.floor(progress * target));
       if (progress < 1) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
-  }, [isInView, target]);
+  }, [started, target]);
 
   return <span ref={ref}>{count}{suffix}</span>;
 };
@@ -59,7 +53,6 @@ const AboutSection = () => {
           animate={isInView ? "show" : "hidden"}
           className="grid md:grid-cols-2 gap-12 items-center"
         >
-          {/* Image side */}
           <motion.div variants={fadeInLeft} className="relative">
             <div className="relative w-full aspect-square max-w-md mx-auto">
               <div className="absolute inset-0 rounded-2xl gradient-border" />
@@ -79,38 +72,25 @@ const AboutSection = () => {
             </div>
           </motion.div>
 
-          {/* Text side */}
           <motion.div variants={fadeInRight}>
             <p className="text-primary font-mono text-sm tracking-widest mb-2">ABOUT ME</p>
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
               Passionate <span className="gradient-text">Developer</span> & Designer
             </h2>
             <p className="text-muted-foreground leading-relaxed mb-4">
-              I'm a full-stack developer with over 5 years of experience crafting digital experiences. I specialize in building modern web applications that are both beautiful and functional, with a keen eye for design and user experience.
+              I'm a full-stack developer with over 5 years of experience crafting digital experiences. I specialize in building modern web applications that are both beautiful and functional.
             </p>
-
-            <motion.div
-              animate={{ height: expanded ? "auto" : 0 }}
-              className="overflow-hidden"
-            >
+            <motion.div animate={{ height: expanded ? "auto" : 0 }} className="overflow-hidden">
               <p className="text-muted-foreground leading-relaxed mb-4">
-                My journey started with a curiosity for how things work on the web, and it has evolved into a passion for creating innovative solutions. I believe in writing clean, maintainable code and designing intuitive interfaces that users love.
-              </p>
-              <p className="text-muted-foreground leading-relaxed">
-                When I'm not coding, you'll find me exploring new technologies, contributing to open-source projects, or mentoring aspiring developers.
+                My journey started with a curiosity for how things work on the web, and it has evolved into a passion for creating innovative solutions. I believe in writing clean, maintainable code.
               </p>
             </motion.div>
-
-            <button
-              onClick={() => setExpanded(!expanded)}
-              className="text-primary font-mono text-sm mt-2 hover:underline"
-            >
+            <button onClick={() => setExpanded(!expanded)} className="text-primary font-mono text-sm mt-2 hover:underline">
               {expanded ? "Show Less" : "Read More →"}
             </button>
           </motion.div>
         </motion.div>
 
-        {/* Stats */}
         <motion.div
           variants={staggerContainer}
           initial="hidden"
@@ -118,11 +98,7 @@ const AboutSection = () => {
           className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16"
         >
           {stats.map((stat) => (
-            <motion.div
-              key={stat.label}
-              variants={fadeInUp}
-              className="glass rounded-xl p-6 text-center glow-box"
-            >
+            <motion.div key={stat.label} variants={fadeInUp} className="glass rounded-xl p-6 text-center glow-box">
               <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">
                 <CountUpNumber target={stat.value} suffix={stat.suffix} />
               </div>

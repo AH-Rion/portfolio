@@ -431,16 +431,22 @@ const AnimatedBackground = () => {
         <PulseGlowLayer />
       </div>
 
-      {/* Mouse spotlight */}
-      <div
-        className="absolute w-[700px] h-[700px] rounded-full"
+      {/* Mouse spotlight - uses direct pixel coords for perfect sync */}
+      <motion.div
+        className="absolute w-[700px] h-[700px] rounded-full pointer-events-none"
         style={{
-          left: `${(mouse.x + 1) * 50}%`,
-          top: `${(mouse.y + 1) * 50}%`,
-          transform: "translate(-50%, -50%)",
-          background: "radial-gradient(circle, #22D3EE08 0%, #6366F104 30%, transparent 70%)",
+          background: "radial-gradient(circle, #22D3EE12 0%, #6366F108 30%, transparent 70%)",
           filter: "blur(40px)",
-          transition: "left 1s ease-out, top 1s ease-out",
+        }}
+        animate={{
+          x: mouse.px - 350,
+          y: mouse.py - 350,
+        }}
+        transition={{
+          type: "spring",
+          damping: 25,
+          stiffness: 150,
+          mass: 0.5,
         }}
       />
 

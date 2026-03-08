@@ -347,12 +347,14 @@ const PulseGlowLayer = () => {
    with Layer 6 parallax mouse tracking
    ────────────────────────────────────────────── */
 const AnimatedBackground = () => {
-  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const [mouse, setMouse] = useState({ x: 0.5, y: 0.5, px: 0, py: 0 });
 
   const handleMove = useCallback((e: MouseEvent) => {
     setMouse({
       x: (e.clientX / window.innerWidth - 0.5) * 2,
       y: (e.clientY / window.innerHeight - 0.5) * 2,
+      px: e.clientX,
+      py: e.clientY,
     });
   }, []);
 
@@ -429,16 +431,22 @@ const AnimatedBackground = () => {
         <PulseGlowLayer />
       </div>
 
-      {/* Mouse spotlight */}
-      <div
-        className="absolute w-[700px] h-[700px] rounded-full"
+      {/* Mouse spotlight - uses direct pixel coords for perfect sync */}
+      <motion.div
+        className="absolute w-[700px] h-[700px] rounded-full pointer-events-none"
         style={{
-          left: `${(mouse.x + 1) * 50}%`,
-          top: `${(mouse.y + 1) * 50}%`,
-          transform: "translate(-50%, -50%)",
-          background: "radial-gradient(circle, #22D3EE08 0%, #6366F104 30%, transparent 70%)",
+          background: "radial-gradient(circle, #22D3EE12 0%, #6366F108 30%, transparent 70%)",
           filter: "blur(40px)",
-          transition: "left 1s ease-out, top 1s ease-out",
+        }}
+        animate={{
+          x: mouse.px - 350,
+          y: mouse.py - 350,
+        }}
+        transition={{
+          type: "spring",
+          damping: 25,
+          stiffness: 150,
+          mass: 0.5,
         }}
       />
 

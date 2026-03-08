@@ -1,200 +1,451 @@
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 
-const AnimatedBackground = () => {
-  const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
+/* ──────────────────────────────────────────────
+   Layer 1 – Aurora Gradient Animation
+   Slow-moving northern-lights bands
+   ────────────────────────────────────────────── */
+const AuroraLayer = () => (
+  <>
+    <motion.div
+      className="absolute -top-[60%] -left-[30%] w-[160%] h-[100%]"
+      style={{
+        background:
+          "conic-gradient(from 0deg at 50% 50%, #6366F1 0deg, transparent 40deg, #22D3EE 80deg, transparent 120deg, #8B5CF6 160deg, transparent 200deg, #6366F1 240deg, transparent 280deg, #22D3EE 320deg, transparent 360deg)",
+        filter: "blur(120px)",
+        opacity: 0.1,
+      }}
+      animate={{ rotate: [0, 360] }}
+      transition={{ duration: 100, repeat: Infinity, ease: "linear" }}
+    />
+    <motion.div
+      className="absolute -bottom-[50%] -right-[25%] w-[140%] h-[90%]"
+      style={{
+        background:
+          "conic-gradient(from 180deg at 50% 50%, #8B5CF6 0deg, transparent 50deg, #F97316 100deg, transparent 150deg, #22D3EE 200deg, transparent 250deg, #6366F1 300deg, transparent 360deg)",
+        filter: "blur(140px)",
+        opacity: 0.07,
+      }}
+      animate={{ rotate: [360, 0] }}
+      transition={{ duration: 130, repeat: Infinity, ease: "linear" }}
+    />
+    {/* Flowing aurora band */}
+    <motion.div
+      className="absolute top-[10%] left-0 right-0 h-[30%]"
+      style={{
+        background: "linear-gradient(90deg, transparent 0%, #6366F180 20%, #22D3EE60 40%, #8B5CF670 60%, #6366F150 80%, transparent 100%)",
+        filter: "blur(80px)",
+        opacity: 0.12,
+      }}
+      animate={{
+        x: ["-20%", "20%", "-20%"],
+        scaleY: [1, 1.3, 1],
+      }}
+      transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+    />
+  </>
+);
 
-  useEffect(() => {
-    const handleMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight });
-    };
-    window.addEventListener("mousemove", handleMove);
-    return () => window.removeEventListener("mousemove", handleMove);
-  }, []);
-
-  const [orbs] = useState(() => [
-    { x: "5%", y: "15%", size: 400, hue: "primary", duration: 22, delay: 0 },
-    { x: "75%", y: "5%", size: 350, hue: "secondary", duration: 28, delay: 3 },
-    { x: "35%", y: "55%", size: 450, hue: "primary", duration: 32, delay: 1 },
-    { x: "85%", y: "65%", size: 300, hue: "secondary", duration: 18, delay: 6 },
-    { x: "15%", y: "80%", size: 380, hue: "primary", duration: 26, delay: 4 },
-    { x: "55%", y: "30%", size: 320, hue: "secondary", duration: 24, delay: 8 },
-    { x: "90%", y: "40%", size: 260, hue: "primary", duration: 30, delay: 10 },
-  ]);
-
-  const [stars] = useState(() =>
-    Array.from({ length: 80 }, (_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 2 + 0.5,
-      duration: Math.random() * 4 + 2,
-      delay: Math.random() * 6,
-    }))
+/* ──────────────────────────────────────────────
+   Layer 2 – Floating Particle System
+   Hundreds of tiny glowing particles
+   ────────────────────────────────────────────── */
+const ParticleLayer = () => {
+  const particles = useMemo(
+    () =>
+      Array.from({ length: 150 }, (_, i) => ({
+        id: i,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        size: Math.random() * 2.5 + 0.5,
+        duration: Math.random() * 8 + 6,
+        delay: Math.random() * 8,
+        driftX: (Math.random() - 0.5) * 60,
+        driftY: (Math.random() - 0.5) * 60,
+        color: ["#6366F1", "#8B5CF6", "#22D3EE", "#F97316"][Math.floor(Math.random() * 4)],
+        pulseChance: Math.random(),
+      })),
+    []
   );
 
   return (
-    <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-      {/* Animated dot grid */}
-      <div className="absolute inset-0 bg-grid opacity-[0.04]" />
+    <>
+      {particles.map((p) => (
+        <motion.div
+          key={p.id}
+          className="absolute rounded-full"
+          style={{
+            left: `${p.x}%`,
+            top: `${p.y}%`,
+            width: p.size,
+            height: p.size,
+            backgroundColor: p.color,
+            boxShadow: p.pulseChance > 0.7 ? `0 0 ${p.size * 4}px ${p.color}80` : "none",
+          }}
+          animate={{
+            x: [0, p.driftX, -p.driftX * 0.6, p.driftX * 0.3, 0],
+            y: [0, p.driftY, -p.driftY * 0.7, p.driftY * 0.4, 0],
+            opacity: p.pulseChance > 0.7
+              ? [0.2, 0.9, 0.3, 0.8, 0.2]
+              : [0.15, 0.5, 0.15],
+            scale: p.pulseChance > 0.85 ? [1, 1.8, 1] : [1, 1.1, 1],
+          }}
+          transition={{
+            duration: p.duration,
+            repeat: Infinity,
+            delay: p.delay,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+    </>
+  );
+};
 
-      {/* Noise texture overlay */}
-      <div className="absolute inset-0 bg-noise opacity-[0.02]" />
+/* ──────────────────────────────────────────────
+   Layer 3 – Neural Network Animation
+   Animated nodes with connecting lines
+   ────────────────────────────────────────────── */
+const NeuralNetworkLayer = () => {
+  const nodes = useMemo(
+    () =>
+      Array.from({ length: 20 }, (_, i) => ({
+        id: i,
+        x: 10 + Math.random() * 80,
+        y: 10 + Math.random() * 80,
+        size: Math.random() * 4 + 2,
+        driftX: (Math.random() - 0.5) * 100,
+        driftY: (Math.random() - 0.5) * 80,
+        duration: Math.random() * 15 + 15,
+        delay: Math.random() * 5,
+      })),
+    []
+  );
 
-      {/* Large rotating aurora */}
+  // Pre-compute connections between nearby nodes
+  const connections = useMemo(() => {
+    const conns: { from: number; to: number }[] = [];
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 30) conns.push({ from: i, to: j });
+      }
+    }
+    return conns;
+  }, [nodes]);
+
+  return (
+    <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.15 }}>
+      {/* Connections */}
+      {connections.map((conn, i) => (
+        <motion.line
+          key={`conn-${i}`}
+          x1={`${nodes[conn.from].x}%`}
+          y1={`${nodes[conn.from].y}%`}
+          x2={`${nodes[conn.to].x}%`}
+          y2={`${nodes[conn.to].y}%`}
+          stroke="#22D3EE"
+          strokeWidth={0.5}
+          animate={{ opacity: [0.1, 0.5, 0.1] }}
+          transition={{
+            duration: 6 + i * 0.5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: i * 0.3,
+          }}
+        />
+      ))}
+      {/* Nodes */}
+      {nodes.map((node) => (
+        <motion.circle
+          key={`node-${node.id}`}
+          cx={`${node.x}%`}
+          cy={`${node.y}%`}
+          r={node.size}
+          fill="#6366F1"
+          animate={{
+            cx: [`${node.x}%`, `${node.x + node.driftX * 0.15}%`, `${node.x}%`],
+            cy: [`${node.y}%`, `${node.y + node.driftY * 0.15}%`, `${node.y}%`],
+            opacity: [0.3, 0.8, 0.3],
+            r: [node.size, node.size * 1.5, node.size],
+          }}
+          transition={{
+            duration: node.duration,
+            repeat: Infinity,
+            delay: node.delay,
+            ease: "easeInOut",
+          }}
+          style={{
+            filter: `drop-shadow(0 0 ${node.size * 2}px #6366F180)`,
+          }}
+        />
+      ))}
+    </svg>
+  );
+};
+
+/* ──────────────────────────────────────────────
+   Layer 4 – Light Energy Waves
+   Soft transparent waves sweeping across
+   ────────────────────────────────────────────── */
+const EnergyWaveLayer = () => (
+  <>
+    {[0, 1, 2, 3].map((i) => (
       <motion.div
-        className="absolute -top-[50%] -left-[30%] w-[160%] h-[80%] opacity-[0.08]"
+        key={`wave-${i}`}
+        className="absolute left-0 right-0"
         style={{
-          background: "conic-gradient(from 0deg at 50% 50%, hsl(var(--primary)) 0deg, transparent 45deg, hsl(var(--secondary)) 90deg, transparent 135deg, hsl(190 80% 40%) 180deg, transparent 225deg, hsl(var(--primary)) 270deg, transparent 315deg, hsl(var(--secondary)) 360deg)",
-          filter: "blur(100px)",
+          top: `${20 + i * 20}%`,
+          height: "1px",
+          background: `linear-gradient(90deg, transparent 0%, ${
+            i % 2 === 0 ? "#22D3EE" : "#8B5CF6"
+          }40 30%, ${i % 2 === 0 ? "#6366F1" : "#22D3EE"}30 50%, ${
+            i % 2 === 0 ? "#8B5CF6" : "#6366F1"
+          }20 70%, transparent 100%)`,
+          boxShadow: `0 0 20px ${i % 2 === 0 ? "#22D3EE" : "#8B5CF6"}20, 0 0 60px ${
+            i % 2 === 0 ? "#22D3EE" : "#8B5CF6"
+          }10`,
         }}
-        animate={{ rotate: [0, 360] }}
-        transition={{ duration: 90, repeat: Infinity, ease: "linear" }}
-      />
-
-      {/* Second counter-rotating aurora (lower) */}
-      <motion.div
-        className="absolute -bottom-[40%] -right-[20%] w-[120%] h-[70%] opacity-[0.06]"
-        style={{
-          background: "conic-gradient(from 180deg at 50% 50%, hsl(var(--secondary)) 0deg, transparent 60deg, hsl(var(--primary)) 120deg, transparent 180deg, hsl(var(--secondary)) 240deg, transparent 300deg)",
-          filter: "blur(120px)",
+        animate={{
+          x: ["-100%", "100%"],
+          opacity: [0, 0.6, 0],
+          scaleY: [1, 2, 1],
         }}
-        animate={{ rotate: [360, 0] }}
-        transition={{ duration: 110, repeat: Infinity, ease: "linear" }}
+        transition={{
+          duration: 12 + i * 3,
+          repeat: Infinity,
+          delay: i * 4,
+          ease: "easeInOut",
+        }}
       />
+    ))}
+    {/* Diagonal wave */}
+    <motion.div
+      className="absolute"
+      style={{
+        top: "0",
+        left: "-50%",
+        width: "200%",
+        height: "2px",
+        background: "linear-gradient(90deg, transparent, #F9731640, #22D3EE30, transparent)",
+        transform: "rotate(-15deg)",
+        transformOrigin: "center",
+      }}
+      animate={{
+        y: ["-20vh", "120vh"],
+        opacity: [0, 0.4, 0],
+      }}
+      transition={{ duration: 18, repeat: Infinity, delay: 5, ease: "easeInOut" }}
+    />
+  </>
+);
 
-      {/* Floating gradient orbs */}
+/* ──────────────────────────────────────────────
+   Layer 5 – Floating Gradient Orbs
+   Large blurred glowing spheres for depth
+   ────────────────────────────────────────────── */
+const GradientOrbLayer = () => {
+  const orbs = useMemo(
+    () => [
+      { x: "8%", y: "15%", size: 500, colors: ["#6366F1", "#22D3EE"], dur: 25, delay: 0 },
+      { x: "75%", y: "10%", colors: ["#8B5CF6", "#6366F1"], size: 400, dur: 30, delay: 4 },
+      { x: "40%", y: "60%", colors: ["#22D3EE", "#8B5CF6"], size: 550, dur: 35, delay: 2 },
+      { x: "85%", y: "70%", colors: ["#F97316", "#8B5CF6"], size: 350, dur: 22, delay: 7 },
+      { x: "20%", y: "85%", colors: ["#6366F1", "#22D3EE"], size: 420, dur: 28, delay: 5 },
+    ],
+    []
+  );
+
+  return (
+    <>
       {orbs.map((orb, i) => (
         <motion.div
-          key={i}
+          key={`orb-${i}`}
           className="absolute rounded-full"
           style={{
             left: orb.x,
             top: orb.y,
             width: orb.size,
             height: orb.size,
-            background: `radial-gradient(circle, hsl(var(--${orb.hue}) / 0.15) 0%, hsl(var(--${orb.hue}) / 0.05) 40%, transparent 70%)`,
-            filter: "blur(50px)",
+            background: `radial-gradient(circle, ${orb.colors[0]}18 0%, ${orb.colors[1]}08 40%, transparent 70%)`,
+            filter: "blur(60px)",
           }}
           animate={{
-            x: [0, 100 * Math.sin(i), -80 * Math.cos(i), 60, 0],
-            y: [0, -70 * Math.cos(i), 50, -90 * Math.sin(i), 0],
-            scale: [1, 1.3, 0.85, 1.15, 1],
-            opacity: [0.6, 1, 0.7, 0.9, 0.6],
+            x: [0, 80 * Math.sin(i + 1), -60 * Math.cos(i), 40, 0],
+            y: [0, -70 * Math.cos(i + 1), 50, -80 * Math.sin(i), 0],
+            scale: [1, 1.2, 0.9, 1.15, 1],
+            opacity: [0.5, 0.8, 0.4, 0.7, 0.5],
           }}
           transition={{
-            duration: orb.duration,
+            duration: orb.dur,
             repeat: Infinity,
             delay: orb.delay,
             ease: "easeInOut",
           }}
         />
       ))}
+    </>
+  );
+};
 
-      {/* Mouse-reactive glow */}
-      <div
-        className="absolute w-[600px] h-[600px] rounded-full transition-all duration-1000 ease-out"
-        style={{
-          left: `${mousePos.x * 100}%`,
-          top: `${mousePos.y * 100}%`,
-          transform: "translate(-50%, -50%)",
-          background: "radial-gradient(circle, hsl(var(--primary) / 0.08) 0%, transparent 70%)",
-          filter: "blur(60px)",
-        }}
-      />
+/* ──────────────────────────────────────────────
+   Layer 7 – Pulse Glow Effects
+   Occasional bright pulses in the scene
+   ────────────────────────────────────────────── */
+const PulseGlowLayer = () => {
+  const pulses = useMemo(
+    () =>
+      Array.from({ length: 8 }, (_, i) => ({
+        id: i,
+        x: 10 + Math.random() * 80,
+        y: 10 + Math.random() * 80,
+        color: ["#6366F1", "#8B5CF6", "#22D3EE", "#F97316"][i % 4],
+        delay: Math.random() * 12,
+        duration: 6 + Math.random() * 6,
+      })),
+    []
+  );
 
-      {/* Twinkling stars */}
-      {stars.map((star) => (
+  return (
+    <>
+      {pulses.map((p) => (
         <motion.div
-          key={star.id}
-          className="absolute rounded-full bg-foreground"
+          key={`pulse-${p.id}`}
+          className="absolute rounded-full"
           style={{
-            left: `${star.x}%`,
-            top: `${star.y}%`,
-            width: star.size,
-            height: star.size,
+            left: `${p.x}%`,
+            top: `${p.y}%`,
+            width: 6,
+            height: 6,
+            backgroundColor: p.color,
           }}
           animate={{
-            opacity: [0, 0.6, 0],
-            scale: [0.5, 1, 0.5],
+            scale: [1, 3, 1],
+            opacity: [0, 0.8, 0],
+            boxShadow: [
+              `0 0 0px ${p.color}00`,
+              `0 0 40px ${p.color}80, 0 0 80px ${p.color}40`,
+              `0 0 0px ${p.color}00`,
+            ],
           }}
           transition={{
-            duration: star.duration,
+            duration: p.duration,
             repeat: Infinity,
-            delay: star.delay,
+            delay: p.delay,
             ease: "easeInOut",
           }}
         />
       ))}
+    </>
+  );
+};
 
-      {/* Moving mesh gradient */}
-      <motion.div
-        className="absolute inset-0 opacity-[0.05]"
+/* ──────────────────────────────────────────────
+   Main Component – All layers combined
+   with Layer 6 parallax mouse tracking
+   ────────────────────────────────────────────── */
+const AnimatedBackground = () => {
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+
+  const handleMove = useCallback((e: MouseEvent) => {
+    setMouse({
+      x: (e.clientX / window.innerWidth - 0.5) * 2,
+      y: (e.clientY / window.innerHeight - 0.5) * 2,
+    });
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("mousemove", handleMove);
+    return () => window.removeEventListener("mousemove", handleMove);
+  }, [handleMove]);
+
+  return (
+    <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none" style={{ background: "#020617" }}>
+      {/* Layer 1 – Aurora (deepest, most parallax) */}
+      <div
+        className="absolute inset-0"
         style={{
-          backgroundImage: `
-            radial-gradient(at 15% 25%, hsl(var(--primary)) 0%, transparent 50%),
-            radial-gradient(at 85% 75%, hsl(var(--secondary)) 0%, transparent 50%),
-            radial-gradient(at 50% 50%, hsl(190 80% 40%) 0%, transparent 60%),
-            radial-gradient(at 75% 20%, hsl(var(--primary)) 0%, transparent 40%)
-          `,
-          backgroundSize: "200% 200%",
+          transform: `translate(${mouse.x * -20}px, ${mouse.y * -20}px)`,
+          transition: "transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)",
         }}
-        animate={{
-          backgroundPosition: ["0% 0%", "50% 100%", "100% 50%", "50% 0%", "0% 0%"],
+      >
+        <AuroraLayer />
+      </div>
+
+      {/* Layer 5 – Gradient Orbs */}
+      <div
+        className="absolute inset-0"
+        style={{
+          transform: `translate(${mouse.x * -14}px, ${mouse.y * -14}px)`,
+          transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)",
         }}
-        transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <GradientOrbLayer />
+      </div>
+
+      {/* Layer 3 – Neural Network */}
+      <div
+        className="absolute inset-0"
+        style={{
+          transform: `translate(${mouse.x * -8}px, ${mouse.y * -8}px)`,
+          transition: "transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)",
+        }}
+      >
+        <NeuralNetworkLayer />
+      </div>
+
+      {/* Layer 4 – Energy Waves */}
+      <div
+        className="absolute inset-0"
+        style={{
+          transform: `translate(${mouse.x * -5}px, ${mouse.y * -5}px)`,
+          transition: "transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)",
+        }}
+      >
+        <EnergyWaveLayer />
+      </div>
+
+      {/* Layer 2 – Particles (closest, least parallax) */}
+      <div
+        className="absolute inset-0"
+        style={{
+          transform: `translate(${mouse.x * -3}px, ${mouse.y * -3}px)`,
+          transition: "transform 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
+        }}
+      >
+        <ParticleLayer />
+      </div>
+
+      {/* Layer 7 – Pulse Glows (foreground) */}
+      <div
+        className="absolute inset-0"
+        style={{
+          transform: `translate(${mouse.x * -2}px, ${mouse.y * -2}px)`,
+          transition: "transform 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
+        }}
+      >
+        <PulseGlowLayer />
+      </div>
+
+      {/* Mouse spotlight */}
+      <div
+        className="absolute w-[700px] h-[700px] rounded-full"
+        style={{
+          left: `${(mouse.x + 1) * 50}%`,
+          top: `${(mouse.y + 1) * 50}%`,
+          transform: "translate(-50%, -50%)",
+          background: "radial-gradient(circle, #22D3EE08 0%, #6366F104 30%, transparent 70%)",
+          filter: "blur(40px)",
+          transition: "left 1s ease-out, top 1s ease-out",
+        }}
       />
 
-      {/* Shooting stars with glow trails */}
-      {[...Array(5)].map((_, i) => (
-        <motion.div
-          key={`streak-${i}`}
-          className="absolute"
-          style={{
-            width: 120 + i * 40,
-            height: 2,
-            top: `${10 + i * 18}%`,
-            left: "-15%",
-            background: `linear-gradient(90deg, transparent, hsl(var(--${i % 2 === 0 ? "primary" : "secondary"}) / 0.6), hsl(var(--${i % 2 === 0 ? "primary" : "secondary"}) / 0.3), transparent)`,
-            borderRadius: "999px",
-            boxShadow: `0 0 8px hsl(var(--${i % 2 === 0 ? "primary" : "secondary"}) / 0.4), 0 0 20px hsl(var(--${i % 2 === 0 ? "primary" : "secondary"}) / 0.2)`,
-            transform: `rotate(${-15 + i * 5}deg)`,
-          }}
-          animate={{ x: ["0vw", "130vw"], opacity: [0, 1, 1, 0] }}
-          transition={{
-            duration: 2 + i * 0.5,
-            repeat: Infinity,
-            delay: i * 5 + 3,
-            ease: "easeIn",
-            repeatDelay: 10 + i * 4,
-          }}
-        />
-      ))}
-
-      {/* Glowing horizontal line accents */}
-      <motion.div
-        className="absolute left-0 right-0 h-px opacity-[0.08]"
-        style={{
-          top: "30%",
-          background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.5), transparent)",
-        }}
-        animate={{ opacity: [0.03, 0.08, 0.03] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute left-0 right-0 h-px opacity-[0.06]"
-        style={{
-          top: "70%",
-          background: "linear-gradient(90deg, transparent, hsl(var(--secondary) / 0.4), transparent)",
-        }}
-        animate={{ opacity: [0.02, 0.06, 0.02] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-      />
-
-      {/* Vignette overlays */}
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/60" />
-      <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,hsl(var(--background))_75%)] opacity-40" />
+      {/* Vignette & depth overlays */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#02061790_60%,#020617_85%)]" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-[#020617cc]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#02061740] via-transparent to-[#02061740]" />
     </div>
   );
 };

@@ -157,6 +157,45 @@ const EditorSection = ({ title, children, defaultOpen = false }: { title: string
   );
 };
 
+const ImageUpload = ({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image must be under 2MB");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onloadend = () => onChange(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  return (
+    <div>
+      <label className="text-xs text-muted-foreground mb-1 block">{label}</label>
+      <div className="flex items-center gap-3">
+        {value ? (
+          <img src={value} alt="Preview" className="w-16 h-16 rounded-lg object-cover border border-border" />
+        ) : (
+          <div className="w-16 h-16 rounded-lg bg-muted/50 border border-border flex items-center justify-center">
+            <ImageIcon size={20} className="text-muted-foreground" />
+          </div>
+        )}
+        <div className="flex flex-col gap-1">
+          <label className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs bg-primary/10 text-primary cursor-pointer hover:bg-primary/20 transition-colors">
+            <Upload size={12} />
+            Upload
+            <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+          </label>
+          {value && (
+            <button onClick={() => onChange("")} className="text-xs text-destructive hover:underline">Remove</button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const FieldInput = ({ label, value, onChange, multiline = false }: { label: string; value: string; onChange: (v: string) => void; multiline?: boolean }) => (
   <div>
     <label className="text-xs text-muted-foreground mb-1 block">{label}</label>

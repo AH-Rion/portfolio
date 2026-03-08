@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 export interface PortfolioData {
+  profileImage: string;
   hero: {
     name: string;
     initials: string;
@@ -55,6 +56,7 @@ export interface PortfolioData {
 }
 
 const defaultData: PortfolioData = {
+  profileImage: "",
   hero: {
     name: "John Doe",
     initials: "JD",

@@ -74,7 +74,11 @@ const HeroSection = () => {
             <div className="w-full h-full rounded-full bg-background" />
           </div>
           <div className="absolute inset-[4px] rounded-full overflow-hidden bg-muted flex items-center justify-center text-3xl font-bold gradient-text">
-            {hero.initials}
+            {data.profileImage ? (
+              <img src={data.profileImage} alt={hero.name} className="w-full h-full object-cover" />
+            ) : (
+              hero.initials
+            )}
           </div>
         </motion.div>
 

@@ -44,7 +44,11 @@ const AboutSection = () => {
             <div className="relative w-full aspect-square max-w-md mx-auto">
               <div className="absolute inset-0 rounded-2xl gradient-border" />
               <div className="absolute inset-2 rounded-xl overflow-hidden bg-muted flex items-center justify-center">
-                <div className="text-6xl font-bold gradient-text">{hero.initials}</div>
+                {data.profileImage ? (
+                  <img src={data.profileImage} alt={hero.name} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="text-6xl font-bold gradient-text">{hero.initials}</div>
+                )}
               </div>
               <motion.div className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-primary/10 border border-primary/20" animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 3, repeat: Infinity }} />
               <motion.div className="absolute -bottom-4 -left-4 w-16 h-16 rounded-lg bg-secondary/10 border border-secondary/20" animate={{ rotate: [0, 10, 0] }} transition={{ duration: 4, repeat: Infinity }} />

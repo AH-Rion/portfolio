@@ -10,25 +10,31 @@ import ExperienceSection from "@/components/ExperienceSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
+import AdminPanel from "@/components/AdminPanel";
+import { PortfolioProvider } from "@/contexts/PortfolioContext";
+import { AdminProvider } from "@/contexts/AdminContext";
 
 const Index = () => {
   return (
-    <>
-      <LoadingScreen />
-      <CustomCursor />
-      <ScrollProgress />
-      <Sidebar />
-      <main className="md:ml-[72px]">
-        <HeroSection />
-        <AboutSection />
-        <SkillsSection />
-        <ProjectsSection />
-        <ExperienceSection />
-        <TestimonialsSection />
-        <ContactSection />
-        <Footer />
-      </main>
-    </>
+    <PortfolioProvider>
+      <AdminProvider>
+        <LoadingScreen />
+        <CustomCursor />
+        <ScrollProgress />
+        <Sidebar />
+        <AdminPanel />
+        <main className="md:ml-[72px]">
+          <HeroSection />
+          <AboutSection />
+          <SkillsSection />
+          <ProjectsSection />
+          <ExperienceSection />
+          <TestimonialsSection />
+          <ContactSection />
+          <Footer />
+        </main>
+      </AdminProvider>
+    </PortfolioProvider>
   );
 };
 

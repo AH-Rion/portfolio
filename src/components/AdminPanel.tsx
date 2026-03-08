@@ -260,8 +260,13 @@ const FullEditorPanel = ({ onClose }: { onClose: () => void }) => {
         </div>
 
         <div className="p-4 space-y-3">
+          {/* Profile Image */}
+          <EditorSection title="📸 Profile Photo" defaultOpen>
+            <ImageUpload label="Profile Photo (used in Hero & About)" value={draft.profileImage} onChange={(v) => update("profileImage", v)} />
+          </EditorSection>
+
           {/* Hero */}
-          <EditorSection title="🏠 Hero Section" defaultOpen>
+          <EditorSection title="🏠 Hero Section">
             <FieldInput label="Name" value={draft.hero.name} onChange={(v) => update("hero.name", v)} />
             <FieldInput label="Initials" value={draft.hero.initials} onChange={(v) => update("hero.initials", v)} />
             <FieldInput label="Subtitle" value={draft.hero.subtitle} onChange={(v) => update("hero.subtitle", v)} />

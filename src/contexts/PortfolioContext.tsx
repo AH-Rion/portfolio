@@ -56,6 +56,7 @@ export interface PortfolioData {
 }
 
 const defaultData: PortfolioData = {
+  profileImage: "",
   hero: {
     name: "John Doe",
     initials: "JD",

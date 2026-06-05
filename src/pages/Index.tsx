@@ -1,4 +1,3 @@
-import CustomCursor from "@/components/CustomCursor";
 import LoadingScreen from "@/components/LoadingScreen";
 import ScrollProgress from "@/components/ScrollProgress";
 import Sidebar from "@/components/Sidebar";

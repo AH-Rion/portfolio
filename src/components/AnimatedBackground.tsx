@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useMemo } from "react";
 
 /* ──────────────────────────────────────────────
    Layer 1 – Aurora Gradient Animation

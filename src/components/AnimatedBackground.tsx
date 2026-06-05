@@ -344,95 +344,33 @@ const PulseGlowLayer = () => {
 
 /* ──────────────────────────────────────────────
    Main Component – All layers combined
-   with Layer 6 parallax mouse tracking
    ────────────────────────────────────────────── */
 const AnimatedBackground = () => {
   return (
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none" style={{ background: "#020617" }}>
-      {/* Layer 1 – Aurora (deepest, most parallax) */}
-      <div
-        className="absolute inset-0"
-        style={{
-          transform: `translate(${mouse.x * -20}px, ${mouse.y * -20}px)`,
-          transition: "transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)",
-        }}
-      >
+      <div className="absolute inset-0">
         <AuroraLayer />
       </div>
 
-      {/* Layer 5 – Gradient Orbs */}
-      <div
-        className="absolute inset-0"
-        style={{
-          transform: `translate(${mouse.x * -14}px, ${mouse.y * -14}px)`,
-          transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)",
-        }}
-      >
+      <div className="absolute inset-0">
         <GradientOrbLayer />
       </div>
 
-      {/* Layer 3 – Neural Network */}
-      <div
-        className="absolute inset-0"
-        style={{
-          transform: `translate(${mouse.x * -8}px, ${mouse.y * -8}px)`,
-          transition: "transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)",
-        }}
-      >
+      <div className="absolute inset-0">
         <NeuralNetworkLayer />
       </div>
 
-      {/* Layer 4 – Energy Waves */}
-      <div
-        className="absolute inset-0"
-        style={{
-          transform: `translate(${mouse.x * -5}px, ${mouse.y * -5}px)`,
-          transition: "transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)",
-        }}
-      >
+      <div className="absolute inset-0">
         <EnergyWaveLayer />
       </div>
 
-      {/* Layer 2 – Particles (closest, least parallax) */}
-      <div
-        className="absolute inset-0"
-        style={{
-          transform: `translate(${mouse.x * -3}px, ${mouse.y * -3}px)`,
-          transition: "transform 0.3s cubic-bezier(0.22, 1, 0.36, 1)",
-        }}
-      >
+      <div className="absolute inset-0">
         <ParticleLayer />
       </div>
 
-      {/* Layer 7 – Pulse Glows (foreground) */}
-      <div
-        className="absolute inset-0"
-        style={{
-          transform: `translate(${mouse.x * -2}px, ${mouse.y * -2}px)`,
-          transition: "transform 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
-        }}
-      >
+      <div className="absolute inset-0">
         <PulseGlowLayer />
       </div>
-
-      {/* Mouse spotlight - uses direct pixel coords for perfect sync */}
-      <motion.div
-        className="absolute w-[700px] h-[700px] rounded-full pointer-events-none"
-        style={{
-          background: "radial-gradient(circle, #22D3EE12 0%, #6366F108 30%, transparent 70%)",
-          filter: "blur(40px)",
-        }}
-        animate={{
-          x: mouse.px - 350,
-          y: mouse.py - 350,
-        }}
-        transition={{
-          type: "spring",
-          damping: 25,
-          stiffness: 150,
-          mass: 0.5,
-        }}
-      />
 
       {/* Vignette & depth overlays */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#02061790_60%,#020617_85%)]" />

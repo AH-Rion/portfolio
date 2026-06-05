@@ -20,7 +20,6 @@ const Index = () => {
       <AdminProvider>
         <AnimatedBackground />
         <LoadingScreen />
-        <CustomCursor />
         <ScrollProgress />
         <Sidebar />
         <AdminPanel />

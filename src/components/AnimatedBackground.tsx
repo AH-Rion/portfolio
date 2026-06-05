@@ -347,22 +347,6 @@ const PulseGlowLayer = () => {
    with Layer 6 parallax mouse tracking
    ────────────────────────────────────────────── */
 const AnimatedBackground = () => {
-  const [mouse, setMouse] = useState({ x: 0.5, y: 0.5, px: 0, py: 0 });
-
-  const handleMove = useCallback((e: MouseEvent) => {
-    setMouse({
-      x: (e.clientX / window.innerWidth - 0.5) * 2,
-      y: (e.clientY / window.innerHeight - 0.5) * 2,
-      px: e.clientX,
-      py: e.clientY,
-    });
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener("mousemove", handleMove);
-    return () => window.removeEventListener("mousemove", handleMove);
-  }, [handleMove]);
-
   return (
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none" style={{ background: "#020617" }}>
       {/* Layer 1 – Aurora (deepest, most parallax) */}

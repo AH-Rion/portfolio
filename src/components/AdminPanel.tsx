@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, LogOut, Pencil, Eye, Settings, X, RotateCcw, Save, ChevronDown, ChevronRight, Plus, Trash2, Upload, ImageIcon } from "lucide-react";
+import { Lock, LogOut, Pencil, Eye, Settings, X, RotateCcw, Save, ChevronDown, ChevronRight, Plus, Trash2, Upload, ImageIcon, KeyRound } from "lucide-react";
 import { useAdmin } from "@/contexts/AdminContext";
 import { usePortfolio, PortfolioData } from "@/contexts/PortfolioContext";
 import { toast } from "sonner";

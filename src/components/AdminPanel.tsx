@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, LogOut, Pencil, Eye, Settings, X, RotateCcw, Save, ChevronDown, ChevronRight, Plus, Trash2, Upload, ImageIcon } from "lucide-react";
+import { Lock, LogOut, Pencil, Eye, Settings, X, RotateCcw, Save, ChevronDown, ChevronRight, Plus, Trash2, Upload, ImageIcon, KeyRound } from "lucide-react";
 import { useAdmin } from "@/contexts/AdminContext";
 import { usePortfolio, PortfolioData } from "@/contexts/PortfolioContext";
 import { toast } from "sonner";
@@ -73,9 +73,96 @@ const AdminLoginButton = () => {
   );
 };
 
+const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
+  const { changePassword } = useAdmin();
+  const [current, setCurrent] = useState("");
+  const [next, setNext] = useState("");
+  const [confirm, setConfirm] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (next.length < 4) {
+      toast.error("New password must be at least 4 characters");
+      return;
+    }
+    if (next !== confirm) {
+      toast.error("Passwords don't match");
+      return;
+    }
+    if (changePassword(current, next)) {
+      toast.success("Password changed successfully!");
+      onClose();
+    } else {
+      toast.error("Current password is incorrect");
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[110] bg-background/80 backdrop-blur-sm flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <motion.form
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        onClick={(e) => e.stopPropagation()}
+        onSubmit={handleSubmit}
+        className="glass rounded-2xl p-8 w-full max-w-sm glow-box space-y-3"
+      >
+        <h3 className="text-xl font-bold gradient-text mb-2">Change Password</h3>
+        <input
+          type="password"
+          value={current}
+          onChange={(e) => setCurrent(e.target.value)}
+          placeholder="Current password"
+          className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
+          autoFocus
+        />
+        <input
+          type="password"
+          value={next}
+          onChange={(e) => setNext(e.target.value)}
+          placeholder="New password (min 4 chars)"
+          className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
+        />
+        <input
+          type="password"
+          value={confirm}
+          onChange={(e) => setConfirm(e.target.value)}
+          placeholder="Confirm new password"
+          className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
+        />
+        <div className="flex gap-2 pt-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 py-3 rounded-xl glass text-muted-foreground hover:text-foreground font-medium"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-medium"
+          >
+            Update
+          </button>
+        </div>
+        <p className="text-xs text-muted-foreground text-center pt-1">
+          Stored locally in this browser. Default: <code>admin123</code>
+        </p>
+      </motion.form>
+    </motion.div>
+  );
+};
+
 const AdminToolbar = () => {
   const { isEditMode, toggleEditMode, logout } = useAdmin();
   const [showPanel, setShowPanel] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   return (
     <>
@@ -114,6 +201,15 @@ const AdminToolbar = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => setShowPasswordModal(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium glass text-muted-foreground hover:text-foreground"
+            title="Change Password"
+          >
+            <KeyRound size={14} />
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={logout}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium glass text-muted-foreground hover:text-destructive"
           >
@@ -124,10 +220,12 @@ const AdminToolbar = () => {
 
       <AnimatePresence>
         {showPanel && <FullEditorPanel onClose={() => setShowPanel(false)} />}
+        {showPasswordModal && <ChangePasswordModal onClose={() => setShowPasswordModal(false)} />}
       </AnimatePresence>
     </>
   );
 };
+
 
 // Collapsible section for the editor
 const EditorSection = ({ title, children, defaultOpen = false }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) => {

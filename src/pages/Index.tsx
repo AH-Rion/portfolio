@@ -11,6 +11,8 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import AdminPanel from "@/components/AdminPanel";
 import AnimatedBackground from "@/components/AnimatedBackground";
+import CloudReveal from "@/components/CloudReveal";
+import CustomCursor from "@/components/CustomCursor";
 import { PortfolioProvider } from "@/contexts/PortfolioContext";
 import { AdminProvider } from "@/contexts/AdminContext";
 
@@ -19,12 +21,16 @@ const Index = () => {
     <PortfolioProvider>
       <AdminProvider>
         <AnimatedBackground />
+        <CustomCursor />
         <LoadingScreen />
         <ScrollProgress />
         <Sidebar />
         <AdminPanel />
         <main className="md:ml-[72px] relative z-10">
-          <HeroSection />
+          <div className="relative">
+            <HeroSection />
+            <CloudReveal />
+          </div>
           <AboutSection />
           <SkillsSection />
           <ProjectsSection />

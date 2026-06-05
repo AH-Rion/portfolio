@@ -58,10 +58,10 @@ export interface PortfolioData {
 const defaultData: PortfolioData = {
   profileImage: "",
   hero: {
-    name: "John Doe",
-    initials: "JD",
-    subtitle: "WELCOME TO MY WORLD",
-    roles: ["Full Stack Developer", "UI/UX Designer", "Creative Thinker", "Problem Solver"],
+    name: "ahrion",
+    initials: "AH",
+    subtitle: "WELCOME TO MY UNIVERSE",
+    roles: ["Tech Enthusiast", "Developer", "Problem Solver", "AI Explorer"],
     cvUrl: "#",
   },
   about: {
@@ -144,8 +144,8 @@ const defaultData: PortfolioData = {
     ],
   },
   footer: {
-    name: "John Doe",
-    tagline: "Full Stack Developer & Designer",
+    name: "ahrion",
+    tagline: "Tech Enthusiast · Developer · Problem Solver",
   },
 };
 

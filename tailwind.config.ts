@@ -14,8 +14,12 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Space Grotesk", "sans-serif"],
+        sans: ["Inter", "sans-serif"],
+        display: ["Syne", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
+      },
+      maxWidth: {
+        content: "1100px",
       },
       colors: {
         border: "hsl(var(--border))",

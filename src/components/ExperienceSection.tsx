@@ -1,38 +1,61 @@
 import { motion } from "framer-motion";
-import useScrollAnimation, { fadeInUp, fadeInLeft, fadeInRight, staggerContainer } from "@/hooks/useScrollAnimation";
+import useScrollAnimation, { fadeInUp, staggerContainer } from "@/hooks/useScrollAnimation";
 import { usePortfolio } from "@/contexts/PortfolioContext";
 
 const ExperienceSection = () => {
-  const { ref, isInView } = useScrollAnimation();
+  const { ref, isInView } = useScrollAnimation(0.1);
   const { data } = usePortfolio();
 
   return (
-    <section id="experience" className="section-padding relative">
-      <div className="max-w-4xl mx-auto">
-        <motion.div ref={ref} initial="hidden" animate={isInView ? "show" : "hidden"} variants={staggerContainer}>
-          <motion.div variants={fadeInUp} className="text-center mb-16">
-            <p className="text-primary font-mono text-sm tracking-widest mb-2">MY JOURNEY</p>
-            <h2 className="text-3xl md:text-4xl font-bold">Work <span className="gradient-text">Experience</span></h2>
-          </motion.div>
-          <div className="relative">
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-border hidden md:block" />
-            {data.experience.map((exp, i) => {
-              const isLeft = i % 2 === 0;
-              return (
-                <motion.div key={i} variants={isLeft ? fadeInLeft : fadeInRight} className={`relative mb-12 md:mb-16 flex ${isLeft ? "md:pr-[52%]" : "md:pl-[52%]"}`}>
-                  <motion.div className="absolute left-1/2 top-6 -translate-x-1/2 w-3 h-3 rounded-full bg-primary hidden md:block" style={{ boxShadow: "0 0 10px hsl(190 100% 50% / 0.5), 0 0 20px hsl(190 100% 50% / 0.2)" }} initial={{ scale: 0 }} animate={isInView ? { scale: 1 } : {}} transition={{ delay: i * 0.2 + 0.3 }} />
-                  <motion.div whileHover={{ boxShadow: "0 0 30px hsl(190 100% 50% / 0.15)", borderColor: "hsl(190 100% 50% / 0.3)" }} className="glass rounded-2xl p-6 w-full transition-colors">
-                    <span className="text-primary font-mono text-xs">{exp.date}</span>
-                    <h3 className="text-lg font-semibold mt-1">{exp.role}</h3>
-                    <p className="text-secondary font-medium text-sm">{exp.company}</p>
-                    <p className="text-muted-foreground text-sm mt-3 leading-relaxed">{exp.description}</p>
-                    <div className="flex flex-wrap gap-2 mt-4">
-                      {exp.tech.map((t) => <span key={t} className="text-xs font-mono px-2 py-1 rounded-md bg-primary/10 text-primary">{t}</span>)}
-                    </div>
-                  </motion.div>
-                </motion.div>
-              );
-            })}
+    <section id="experience" className="section-padding">
+      <div className="container-narrow">
+        <motion.div
+          ref={ref}
+          variants={staggerContainer}
+          initial="hidden"
+          animate={isInView ? "show" : "hidden"}
+        >
+          <motion.p variants={fadeInUp} className="label-eyebrow mb-3">
+            Experience
+          </motion.p>
+          <motion.h2
+            variants={fadeInUp}
+            className="font-display text-3xl md:text-4xl font-semibold mb-12 max-w-2xl"
+          >
+            Where I've built things.
+          </motion.h2>
+
+          <div className="space-y-4">
+            {data.experience.map((exp, i) => (
+              <motion.div
+                key={i}
+                variants={fadeInUp}
+                className="surface-card p-6 grid md:grid-cols-[180px_1fr] gap-6 hover:border-primary/40 transition-colors"
+              >
+                <div className="text-xs text-muted-foreground font-mono uppercase tracking-wider pt-1">
+                  {exp.date}
+                </div>
+                <div>
+                  <h3 className="font-display text-lg font-semibold text-foreground">
+                    {exp.role}
+                  </h3>
+                  <p className="text-sm text-primary mb-3">{exp.company}</p>
+                  <p className="text-sm text-muted-foreground leading-[1.7] mb-4">
+                    {exp.description}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {exp.tech.map((t) => (
+                      <span
+                        key={t}
+                        className="text-[10px] uppercase tracking-wider font-medium px-2 py-1 rounded text-primary bg-primary/10"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </motion.div>
       </div>

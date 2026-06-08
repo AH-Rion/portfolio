@@ -1,18 +1,14 @@
-import LoadingScreen from "@/components/LoadingScreen";
 import ScrollProgress from "@/components/ScrollProgress";
-import Sidebar from "@/components/Sidebar";
+import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
 import SkillsSection from "@/components/SkillsSection";
 import ProjectsSection from "@/components/ProjectsSection";
 import ExperienceSection from "@/components/ExperienceSection";
-import TestimonialsSection from "@/components/TestimonialsSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import AdminPanel from "@/components/AdminPanel";
 import AnimatedBackground from "@/components/AnimatedBackground";
-import CloudReveal from "@/components/CloudReveal";
-import CustomCursor from "@/components/CustomCursor";
 import { PortfolioProvider } from "@/contexts/PortfolioContext";
 import { AdminProvider } from "@/contexts/AdminContext";
 
@@ -21,24 +17,18 @@ const Index = () => {
     <PortfolioProvider>
       <AdminProvider>
         <AnimatedBackground />
-        <CustomCursor />
-        <LoadingScreen />
         <ScrollProgress />
-        <Sidebar />
+        <Navbar />
         <AdminPanel />
-        <main className="md:ml-[72px] relative z-10">
-          <div className="relative">
-            <HeroSection />
-            <CloudReveal />
-          </div>
+        <main className="relative z-10">
+          <HeroSection />
           <AboutSection />
           <SkillsSection />
           <ProjectsSection />
           <ExperienceSection />
-          <TestimonialsSection />
           <ContactSection />
-          <Footer />
         </main>
+        <Footer />
       </AdminProvider>
     </PortfolioProvider>
   );

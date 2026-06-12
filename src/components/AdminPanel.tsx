@@ -500,6 +500,9 @@ const FullEditorPanel = ({ onClose }: { onClose: () => void }) => {
                 <FieldInput label="Category" value={project.category} onChange={(v) => { const p = [...draft.projects]; p[i] = { ...p[i], category: v }; update("projects", p); }} />
                 <FieldInput label="Description" value={project.description} onChange={(v) => { const p = [...draft.projects]; p[i] = { ...p[i], description: v }; update("projects", p); }} multiline />
                 <FieldInput label="Tech (comma-separated)" value={project.tech.join(", ")} onChange={(v) => { const p = [...draft.projects]; p[i] = { ...p[i], tech: v.split(",").map(s => s.trim()).filter(Boolean) }; update("projects", p); }} />
+                <FieldInput label="Live URL" value={project.liveUrl || ""} onChange={(v) => { const p = [...draft.projects]; p[i] = { ...p[i], liveUrl: v }; update("projects", p); }} />
+                <FieldInput label="GitHub URL" value={project.githubUrl || ""} onChange={(v) => { const p = [...draft.projects]; p[i] = { ...p[i], githubUrl: v }; update("projects", p); }} />
+                <ImageUpload label="Project Image (background)" value={project.image || ""} onChange={(v) => { const p = [...draft.projects]; p[i] = { ...p[i], image: v }; update("projects", p); }} />
                 <div className="flex items-center gap-2">
                   <label className="text-xs text-muted-foreground">Featured</label>
                   <input

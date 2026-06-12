@@ -5,7 +5,6 @@ const links = [
   { id: "about", label: "About" },
   { id: "skills", label: "Skills" },
   { id: "projects", label: "Projects" },
-  { id: "experience", label: "Experience" },
   { id: "contact", label: "Contact" },
 ];
 
@@ -39,14 +38,15 @@ const Navbar = () => {
     <header
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "backdrop-blur-xl bg-background/80 border-b border-border"
+          ? "backdrop-blur-xl border-b border-border"
           : "bg-transparent"
       }`}
+      style={scrolled ? { backgroundColor: "rgba(2, 6, 23, 0.85)" } : undefined}
     >
       <nav className="container-narrow flex items-center justify-between h-16 px-6 md:px-10">
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="font-display text-xl font-bold tracking-tight text-foreground"
+          className="text-xl font-bold tracking-tight text-primary"
         >
           ahrion
         </button>
@@ -59,9 +59,6 @@ const Navbar = () => {
               className={`nav-link relative py-2 ${active === l.id ? "nav-link-active" : ""}`}
             >
               {l.label}
-              {active === l.id && (
-                <span className="absolute -bottom-0.5 left-0 right-0 h-px bg-primary" />
-              )}
             </button>
           ))}
         </div>
@@ -75,7 +72,6 @@ const Navbar = () => {
         </button>
       </nav>
 
-      {/* Mobile drawer */}
       <div
         className={`md:hidden fixed inset-y-0 right-0 w-72 bg-card border-l border-border transform transition-transform duration-300 ${
           open ? "translate-x-0" : "translate-x-full"

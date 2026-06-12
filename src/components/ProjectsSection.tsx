@@ -9,7 +9,7 @@ const ProjectsSection = () => {
 
   // Show first 3 projects with screenshot placeholders.
   const projects = data.projects.slice(0, 3);
-  const imageFor = (i: number) => `/images/project-${i + 1}.png`;
+  const imageFor = (p: (typeof projects)[number], i: number) => p.image || `/images/project-${i + 1}.png`;
 
   return (
     <section id="projects" className="section-padding">

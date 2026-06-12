@@ -8,8 +8,8 @@ const Footer = () => {
   return (
     <footer className="border-t border-border">
       <div className="container-narrow px-6 md:px-10 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p className="text-xs text-muted-foreground">
-          © {new Date().getFullYear()} {data.footer.name}. All rights reserved.
+        <p className="text-sm text-muted-foreground">
+          © {new Date().getFullYear()} {data.footer.name}. Crafted with passion.
         </p>
         <div className="flex items-center gap-4">
           {data.contact.socials.map((s) => {

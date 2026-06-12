@@ -29,6 +29,7 @@ export interface PortfolioData {
     featured?: boolean;
     liveUrl?: string;
     githubUrl?: string;
+    image?: string;
   }[];
   experience: {
     company: string;

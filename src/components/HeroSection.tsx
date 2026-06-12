@@ -77,30 +77,17 @@ const HeroSection = () => {
             className="relative aspect-square w-[360px] rounded-2xl overflow-hidden border-2 border-primary"
             style={{ boxShadow: "0 30px 80px -20px rgba(99,102,241,0.45)" }}
           >
-            {/* Replace /images/profile.jpg with your photo */}
-            {data.profileImage ? (
-              <img
-                src={data.profileImage}
-                alt={`${hero.name} profile`}
-                loading="lazy"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <img
-                src="/images/profile.jpg"
-                alt={`${hero.name} profile`}
-                loading="lazy"
-                onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).style.display = "none";
-                }}
-                className="w-full h-full object-cover"
-              />
-            )}
-            {!data.profileImage && (
-              <div className="absolute inset-0 flex items-center justify-center bg-card text-primary font-bold text-7xl">
-                {hero.initials}
-              </div>
-            )}
+            {/* Replace with your photo: drop file at /public/images/profile.jpg */}
+            <div className="absolute inset-0 flex items-center justify-center bg-card text-primary font-bold text-7xl">
+              {hero.initials}
+            </div>
+            <img
+              src={data.profileImage || "/images/profile.jpg"}
+              alt={`${hero.name} profile`}
+              loading="lazy"
+              onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+              className="relative w-full h-full object-cover"
+            />
           </div>
         </motion.div>
       </div>

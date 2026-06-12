@@ -9,7 +9,7 @@ const ProjectsSection = () => {
 
   // Show first 3 projects with screenshot placeholders.
   const projects = data.projects.slice(0, 3);
-  const imageFor = (i: number) => `/images/project-${i + 1}.png`;
+  const imageFor = (p: (typeof projects)[number], i: number) => p.image || `/images/project-${i + 1}.png`;
 
   return (
     <section id="projects" className="section-padding">
@@ -48,7 +48,7 @@ const ProjectsSection = () => {
                 <div className="relative h-[200px] overflow-hidden bg-background rounded-t-xl">
                   {/* Replace with actual screenshot */}
                   <img
-                    src={imageFor(i)}
+                    src={imageFor(p, i)}
                     alt={p.title}
                     loading="lazy"
                     onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}

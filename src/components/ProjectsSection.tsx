@@ -48,7 +48,7 @@ const ProjectsSection = () => {
                 <div className="relative h-[200px] overflow-hidden bg-background rounded-t-xl">
                   {/* Replace with actual screenshot */}
                   <img
-                    src={imageFor(i)}
+                    src={imageFor(p, i)}
                     alt={p.title}
                     loading="lazy"
                     onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}

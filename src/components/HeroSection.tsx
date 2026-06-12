@@ -2,15 +2,6 @@ import { motion } from "framer-motion";
 import { ArrowRight, Download } from "lucide-react";
 import { usePortfolio } from "@/contexts/PortfolioContext";
 
-const codeSnippet = `const ahrion = {
-  role: "Full-Stack Developer",
-  focus: ["React", "TypeScript", "Node"],
-  building: "Digital products that matter",
-  available: true,
-};
-
-export default ahrion;`;
-
 const HeroSection = () => {
   const { data } = usePortfolio();
   const { hero } = data;
@@ -18,78 +9,99 @@ const HeroSection = () => {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center pt-24 pb-16"
+      className="relative min-h-screen flex items-center pt-24 pb-16 px-6 md:px-10"
     >
-      {/* Ambient glow */}
-      <div className="absolute left-1/4 top-1/3 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] accent-glow pointer-events-none" />
-
-      <div className="container-narrow w-full px-6 md:px-10 grid lg:grid-cols-2 gap-12 items-center relative">
+      <div className="container-narrow w-full grid lg:grid-cols-[1.2fr_1fr] gap-12 lg:gap-16 items-center relative">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
         >
-          <div className="inline-flex items-center gap-2 label-eyebrow mb-6">
+          <div
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 text-[12px] uppercase font-semibold tracking-wider"
+            style={{
+              backgroundColor: "rgba(99, 102, 241, 0.12)",
+              color: "#a5b4fc",
+              border: "1px solid rgba(99, 102, 241, 0.25)",
+            }}
+          >
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
             </span>
-            Available for work ✦
+            Available for work
           </div>
 
-          <h1 className="font-display font-bold text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight text-foreground mb-6">
-            {hero.name}
+          <h1 className="font-bold text-5xl md:text-6xl lg:text-[68px] leading-[1.05] tracking-tight text-foreground mb-5">
+            Hi, I'm <span className="text-primary">{hero.name.charAt(0).toUpperCase() + hero.name.slice(1)}</span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-muted-foreground leading-snug max-w-lg mb-10">
-            Building digital products that matter — clean code, considered design, measurable impact.
+          <p className="text-xl md:text-2xl text-muted-foreground mb-5">
+            Full Stack Developer & Tech Enthusiast
+          </p>
+
+          <p className="text-base text-muted-foreground max-w-lg mb-10 leading-[1.7]">
+            I build modern, performant web experiences with clean code and considered design.
+            Currently focused on React, TypeScript, and shipping products that matter.
           </p>
 
           <div className="flex flex-wrap gap-3">
             <button
               onClick={() => document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" })}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center gap-2 px-7 py-3 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
             >
               View My Work <ArrowRight size={16} />
             </button>
             <a
               href={hero.cvUrl}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-card transition-colors"
+              className="inline-flex items-center gap-2 px-7 py-3 rounded-lg border border-primary text-primary text-sm font-semibold hover:bg-primary/10 transition-colors"
             >
               <Download size={16} /> Download CV
             </a>
           </div>
         </motion.div>
 
-        {/* Code card */}
+        {/* Right column — profile photo */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
-          className="hidden lg:block surface-card overflow-hidden shadow-2xl"
+          className="hidden lg:flex items-center justify-center relative"
         >
-          <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-background/40">
-            <span className="w-3 h-3 rounded-full bg-red-500/70" />
-            <span className="w-3 h-3 rounded-full bg-yellow-500/70" />
-            <span className="w-3 h-3 rounded-full bg-green-500/70" />
-            <span className="ml-3 text-xs font-mono text-muted-foreground">ahrion.ts</span>
+          {/* Blurred radial glow behind */}
+          <div
+            className="absolute inset-0 -m-12 rounded-full blur-3xl"
+            style={{ background: "radial-gradient(circle, rgba(99,102,241,0.20), transparent 65%)" }}
+          />
+          <div
+            className="relative aspect-square w-[360px] rounded-2xl overflow-hidden border-2 border-primary"
+            style={{ boxShadow: "0 30px 80px -20px rgba(99,102,241,0.45)" }}
+          >
+            {/* Replace /images/profile.jpg with your photo */}
+            {data.profileImage ? (
+              <img
+                src={data.profileImage}
+                alt={`${hero.name} profile`}
+                loading="lazy"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <img
+                src="/images/profile.jpg"
+                alt={`${hero.name} profile`}
+                loading="lazy"
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.display = "none";
+                }}
+                className="w-full h-full object-cover"
+              />
+            )}
+            {!data.profileImage && (
+              <div className="absolute inset-0 flex items-center justify-center bg-card text-primary font-bold text-7xl">
+                {hero.initials}
+              </div>
+            )}
           </div>
-          <pre className="p-6 text-sm font-mono leading-relaxed text-muted-foreground overflow-auto">
-            <code>
-              <span className="text-primary">const</span>{" "}
-              <span className="text-foreground">ahrion</span> = {"{"}
-              {"\n  "}role: <span className="text-emerald-400">"Full-Stack Developer"</span>,
-              {"\n  "}focus: [<span className="text-emerald-400">"React"</span>,{" "}
-              <span className="text-emerald-400">"TypeScript"</span>,{" "}
-              <span className="text-emerald-400">"Node"</span>],
-              {"\n  "}building: <span className="text-emerald-400">"Digital products that matter"</span>,
-              {"\n  "}available: <span className="text-primary">true</span>,
-              {"\n"}{"}"};
-              {"\n\n"}
-              <span className="text-primary">export default</span>{" "}
-              <span className="text-foreground">ahrion</span>;
-            </code>
-          </pre>
         </motion.div>
       </div>
     </section>

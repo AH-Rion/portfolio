@@ -46,7 +46,7 @@ const HeroSection = () => {
           </div>
 
           <h1 className="font-bold text-5xl md:text-6xl lg:text-[68px] leading-[1.05] tracking-tight text-foreground mb-5">
-            Hi, I'm <span className="text-primary">{hero.name.charAt(0).toUpperCase() + hero.name.slice(1)}</span>
+            Hi, I'm <span className="brand-gradient">{hero.name.charAt(0).toUpperCase() + hero.name.slice(1)}</span>
           </h1>
 
           <p className="text-xl md:text-2xl text-muted-foreground mb-5">

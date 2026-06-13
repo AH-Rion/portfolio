@@ -8,8 +8,6 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import AdminPanel from "@/components/AdminPanel";
 import AnimatedBackground from "@/components/AnimatedBackground";
-import LoadingScreen from "@/components/LoadingScreen";
-import CustomCursor from "@/components/CustomCursor";
 import { PortfolioProvider } from "@/contexts/PortfolioContext";
 import { AdminProvider } from "@/contexts/AdminContext";
 
@@ -17,8 +15,6 @@ const Index = () => {
   return (
     <PortfolioProvider>
       <AdminProvider>
-        <LoadingScreen />
-        <CustomCursor />
         <AnimatedBackground />
         <ScrollProgress />
         <Navbar />
@@ -37,3 +33,4 @@ const Index = () => {
 };
 
 export default Index;
+

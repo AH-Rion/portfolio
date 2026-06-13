@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { ArrowUpRight, Github } from "lucide-react";
 import useScrollAnimation, { fadeInUp, staggerContainer } from "@/hooks/useScrollAnimation";
 import { usePortfolio } from "@/contexts/PortfolioContext";
-import TiltCard from "@/components/TiltCard";
 
 const ProjectsSection = () => {
   const { data } = usePortfolio();
@@ -33,8 +32,19 @@ const ProjectsSection = () => {
 
           <div className="grid md:grid-cols-2 gap-6">
             {projects.map((p, i) => (
-              <motion.div key={p.id} variants={fadeInUp}>
-                <TiltCard className="group surface-card overflow-hidden transition-shadow duration-300 hover:border-primary hover:shadow-[0_30px_80px_-20px_rgba(99,102,241,0.55)]">
+              /* PROJECT {i+1}: Replace name, description, links, and /images/project-{i+1}.png */
+              <motion.article
+                key={p.id}
+                variants={fadeInUp}
+                className="group surface-card overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary"
+                style={{ transitionProperty: "transform, border-color, box-shadow" }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.boxShadow = "0 20px 50px -20px rgba(99,102,241,0.45)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.boxShadow = "";
+                }}
+              >
                 <div className="relative h-[200px] overflow-hidden bg-background rounded-t-xl">
                   {/* Replace with actual screenshot */}
                   <img
@@ -94,8 +104,7 @@ const ProjectsSection = () => {
                     )}
                   </div>
                 </div>
-                </TiltCard>
-              </motion.div>
+              </motion.article>
             ))}
           </div>
 

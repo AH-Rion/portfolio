@@ -60,26 +60,20 @@ const SkillsSection = () => {
               <motion.div
                 key={group.title}
                 variants={fadeInUp}
-                whileHover={{ y: -6 }}
-                transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                className="surface-card p-6 transition-shadow duration-300 hover:shadow-[0_20px_60px_-20px_rgba(99,102,241,0.5)] hover:border-primary/60"
+                className="surface-card p-6"
               >
                 <h3 className="text-lg font-semibold mb-5 text-foreground">
                   {group.title}
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {group.skills.map((s, idx) => (
-                    <motion.span
+                  {group.skills.map((s) => (
+                    <span
                       key={s.name}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                      transition={{ delay: 0.2 + idx * 0.05, type: "spring", stiffness: 300, damping: 18 }}
-                      whileHover={{ scale: 1.08, y: -2 }}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-foreground bg-card border border-border hover:border-primary hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all duration-200"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-foreground bg-card border border-border hover:border-primary transition-colors duration-200"
                     >
                       <img src={s.icon} alt={s.name} width={20} height={20} loading="lazy" />
                       {s.name}
-                    </motion.span>
+                    </span>
                   ))}
                 </div>
               </motion.div>

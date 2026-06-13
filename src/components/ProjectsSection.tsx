@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { ArrowUpRight, Github } from "lucide-react";
 import useScrollAnimation, { fadeInUp, staggerContainer } from "@/hooks/useScrollAnimation";
 import { usePortfolio } from "@/contexts/PortfolioContext";
+import TiltCard from "@/components/TiltCard";
 
 const ProjectsSection = () => {
   const { data } = usePortfolio();

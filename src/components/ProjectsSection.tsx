@@ -94,7 +94,8 @@ const ProjectsSection = () => {
                     )}
                   </div>
                 </div>
-              </motion.article>
+                </TiltCard>
+              </motion.div>
             ))}
           </div>
 

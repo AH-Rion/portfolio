@@ -50,6 +50,10 @@
     line-height: 1.7;
     font-feature-settings: 'cv02','cv03','cv04','cv11';
   }
+  @media (hover: hover) and (pointer: fine) {
+    body { cursor: none; }
+    body * { cursor: none !important; }
+  }
   h1, h2, h3, h4, h5 {
     font-family: 'Inter', sans-serif;
     letter-spacing: -0.025em;
@@ -82,6 +86,19 @@
   }
   .accent-glow {
     background: radial-gradient(circle at center, rgba(99, 102, 241, 0.15), transparent 60%);
+  }
+  .brand-gradient {
+    background: linear-gradient(110deg, #22d3ee 0%, #6366f1 35%, #a78bfa 65%, #22d3ee 100%);
+    background-size: 220% 220%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: brand-shimmer 6s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.35));
+  }
+  @keyframes brand-shimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
   }
   .nav-link {
     @apply text-sm font-medium text-muted-foreground hover:text-foreground transition-colors;

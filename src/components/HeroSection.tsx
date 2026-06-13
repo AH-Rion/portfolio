@@ -1,17 +1,30 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Download } from "lucide-react";
+import { useRef } from "react";
 import { usePortfolio } from "@/contexts/PortfolioContext";
+import CloudReveal from "@/components/CloudReveal";
 
 const HeroSection = () => {
   const { data } = usePortfolio();
   const { hero } = data;
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, 120]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  const contentBlur = useTransform(scrollYProgress, [0, 1], [0, 6]);
+  const contentFilter = useTransform(contentBlur, (b) => `blur(${b}px)`);
 
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center pt-24 pb-16 px-6 md:px-10"
+      ref={sectionRef}
+      className="relative min-h-screen flex items-center pt-24 pb-16 px-6 md:px-10 overflow-hidden"
     >
-      <div className="container-narrow w-full grid lg:grid-cols-[1.2fr_1fr] gap-12 lg:gap-16 items-center relative">
+      <CloudReveal />
+      <motion.div
+        style={{ y: contentY, opacity: contentOpacity, filter: contentFilter }}
+        className="container-narrow w-full grid lg:grid-cols-[1.2fr_1fr] gap-12 lg:gap-16 items-center relative z-10"
+      >
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -33,7 +46,7 @@ const HeroSection = () => {
           </div>
 
           <h1 className="font-bold text-5xl md:text-6xl lg:text-[68px] leading-[1.05] tracking-tight text-foreground mb-5">
-            Hi, I'm <span className="text-primary">{hero.name.charAt(0).toUpperCase() + hero.name.slice(1)}</span>
+            Hi, I'm <span className="brand-gradient">{hero.name.charAt(0).toUpperCase() + hero.name.slice(1)}</span>
           </h1>
 
           <p className="text-xl md:text-2xl text-muted-foreground mb-5">
@@ -90,7 +103,7 @@ const HeroSection = () => {
             />
           </div>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 };

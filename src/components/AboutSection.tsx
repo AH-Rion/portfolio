@@ -32,12 +32,25 @@ const AboutSection = () => {
             Who I Am
           </motion.h2>
 
-          <motion.p variants={fadeInUp} className="text-base text-muted-foreground leading-[1.7] max-w-3xl mb-4">
-            {about.description}
-          </motion.p>
-          <motion.p variants={fadeInUp} className="text-base text-muted-foreground leading-[1.7] max-w-3xl">
-            {about.expandedDescription}
-          </motion.p>
+          {[about.description, about.expandedDescription].map((para, pi) => (
+            <motion.p
+              key={pi}
+              variants={fadeInUp}
+              className="text-base text-muted-foreground leading-[1.7] max-w-3xl mb-4"
+            >
+              {para?.split(" ").map((word, wi) => (
+                <motion.span
+                  key={wi}
+                  initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
+                  animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
+                  transition={{ delay: pi * 0.4 + wi * 0.015, duration: 0.4 }}
+                  className="inline-block mr-[0.25em]"
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </motion.p>
+          ))}
 
           <motion.div
             variants={staggerContainer}

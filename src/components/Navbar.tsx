@@ -46,7 +46,7 @@ const Navbar = () => {
       <nav className="container-narrow flex items-center justify-between h-16 px-6 md:px-10">
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="text-xl font-bold tracking-tight text-primary"
+          className="text-xl font-bold tracking-tight brand-gradient"
         >
           ahrion
         </button>

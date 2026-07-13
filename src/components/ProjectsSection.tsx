@@ -7,9 +7,9 @@ const ProjectsSection = () => {
   const { data } = usePortfolio();
   const { ref, isInView } = useScrollAnimation(0.1);
 
-  // Show first 3 projects with screenshot placeholders.
   const projects = data.projects.slice(0, 3);
-  const imageFor = (p: (typeof projects)[number], i: number) => p.image || `/images/project-${i + 1}.png`;
+  const imageFor = (p: (typeof projects)[number], i: number) =>
+    p.image || `/images/project-${i + 1}.png`;
 
   return (
     <section id="projects" className="section-padding">
@@ -20,86 +20,79 @@ const ProjectsSection = () => {
           initial="hidden"
           animate={isInView ? "show" : "hidden"}
         >
-          <motion.p variants={fadeInUp} className="label-eyebrow mb-3">
+          <motion.p variants={fadeInUp} className="label-eyebrow mb-4">
             Selected Work
           </motion.p>
           <motion.h2
             variants={fadeInUp}
-            className="text-3xl md:text-[40px] font-bold mb-12 max-w-2xl"
+            className="font-display text-4xl md:text-5xl font-extrabold mb-12 max-w-2xl text-[#3D4852]"
           >
             Projects I've Built
           </motion.h2>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-8">
             {projects.map((p, i) => (
-              /* PROJECT {i+1}: Replace name, description, links, and /images/project-{i+1}.png */
               <motion.article
                 key={p.id}
                 variants={fadeInUp}
-                className="group surface-card overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary"
-                style={{ transitionProperty: "transform, border-color, box-shadow" }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.boxShadow = "0 20px 50px -20px rgba(99,102,241,0.45)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.boxShadow = "";
-                }}
+                className="neu-card p-6 group"
               >
-                <div className="relative h-[200px] overflow-hidden bg-background rounded-t-xl">
-                  {/* Replace with actual screenshot */}
-                  <img
-                    src={imageFor(p, i)}
-                    alt={p.title}
-                    loading="lazy"
-                    onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center text-6xl font-bold text-primary/20 pointer-events-none -z-0">
-                    {p.title.charAt(0)}
+                {/* Screenshot in an inset well */}
+                <div className="neu-inset rounded-3xl p-3 mb-6">
+                  <div className="relative h-[200px] rounded-2xl overflow-hidden bg-[#E0E5EC]">
+                    <img
+                      src={imageFor(p, i)}
+                      alt={p.title}
+                      loading="lazy"
+                      onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center font-display text-6xl font-extrabold text-[#6C63FF]/30 pointer-events-none -z-0">
+                      {p.title.charAt(0)}
+                    </div>
+                    {p.liveUrl && (
+                      <a
+                        href={p.liveUrl}
+                        className="absolute inset-0 flex items-center justify-center bg-[#E0E5EC]/80 backdrop-blur-sm text-[#6C63FF] text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      >
+                        View Live →
+                      </a>
+                    )}
                   </div>
-                  {p.liveUrl && (
-                    <a
-                      href={p.liveUrl}
-                      className="absolute inset-0 flex items-center justify-center bg-background/70 text-foreground text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    >
-                      View Live →
-                    </a>
-                  )}
                 </div>
-                <div className="p-5">
-                  <h3 className="text-lg font-bold mb-1.5 text-foreground">{p.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+
+                <div className="px-2">
+                  <h3 className="font-display text-xl font-bold mb-2 text-[#3D4852]">
+                    {p.title}
+                  </h3>
+                  <p className="text-sm text-[#6B7280] leading-relaxed mb-5">
                     {p.description}
                   </p>
-                  <div className="flex flex-wrap gap-1.5 mb-5">
+                  <div className="flex flex-wrap gap-2 mb-5">
                     {p.tech.map((t) => (
                       <span
                         key={t}
-                        className="text-xs font-medium px-2.5 py-1 rounded"
-                        style={{
-                          backgroundColor: "rgba(99, 102, 241, 0.15)",
-                          color: "#a5b4fc",
-                        }}
+                        className="neu-inset-sm rounded-full px-3 py-1 text-xs font-semibold text-[#3D4852]"
                       >
                         {t}
                       </span>
                     ))}
                   </div>
-                  <div className="flex items-center gap-5 pt-4 border-t border-border text-sm">
+                  <div className="flex items-center gap-4 pt-4 text-sm">
                     {p.githubUrl && (
                       <a
                         href={p.githubUrl}
-                        className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors"
+                        className="neu-btn inline-flex items-center gap-2 px-4 py-2 text-xs"
                       >
-                        <Github size={15} /> Code
+                        <Github size={14} /> Code
                       </a>
                     )}
                     {p.liveUrl && (
                       <a
                         href={p.liveUrl}
-                        className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors"
+                        className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#6C63FF] hover:gap-2.5 transition-all"
                       >
-                        <ArrowUpRight size={15} /> Live Demo
+                        Live Demo <ArrowUpRight size={14} />
                       </a>
                     )}
                   </div>
@@ -108,10 +101,10 @@ const ProjectsSection = () => {
             ))}
           </div>
 
-          <motion.div variants={fadeInUp} className="mt-12 text-center">
+          <motion.div variants={fadeInUp} className="mt-14 text-center">
             <a
               href="https://github.com/"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
+              className="neu-btn inline-flex items-center gap-2 px-6 py-3 text-sm text-[#6C63FF]"
             >
               View All on GitHub <ArrowUpRight size={14} />
             </a>

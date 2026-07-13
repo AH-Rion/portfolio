@@ -45,33 +45,37 @@ const SkillsSection = () => {
           initial="hidden"
           animate={isInView ? "show" : "hidden"}
         >
-          <motion.p variants={fadeInUp} className="label-eyebrow mb-3">
+          <motion.p variants={fadeInUp} className="label-eyebrow mb-4">
             Skills & Tools
           </motion.p>
           <motion.h2
             variants={fadeInUp}
-            className="text-3xl md:text-[40px] font-bold mb-12 max-w-2xl"
+            className="font-display text-4xl md:text-5xl font-extrabold mb-12 max-w-2xl text-[#3D4852]"
           >
             What I Work With
           </motion.h2>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-8">
             {skillGroups.map((group) => (
               <motion.div
                 key={group.title}
                 variants={fadeInUp}
-                className="surface-card p-6"
+                className="neu-card p-8"
               >
-                <h3 className="text-lg font-semibold mb-5 text-foreground">
-                  {group.title}
-                </h3>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="neu-icon-well w-12 h-12">
+                    <span className="font-display font-extrabold text-[#6C63FF]">
+                      {group.title.charAt(0)}
+                    </span>
+                  </div>
+                  <h3 className="font-display text-xl font-bold text-[#3D4852]">
+                    {group.title}
+                  </h3>
+                </div>
+                <div className="flex flex-wrap gap-3">
                   {group.skills.map((s) => (
-                    <span
-                      key={s.name}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-foreground bg-card border border-border hover:border-primary transition-colors duration-200"
-                    >
-                      <img src={s.icon} alt={s.name} width={20} height={20} loading="lazy" />
+                    <span key={s.name} className="neu-chip">
+                      <img src={s.icon} alt={s.name} width={18} height={18} loading="lazy" />
                       {s.name}
                     </span>
                   ))}

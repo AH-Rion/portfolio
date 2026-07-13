@@ -31,80 +31,76 @@ const ContactSection = () => {
           variants={staggerContainer}
           initial="hidden"
           animate={isInView ? "show" : "hidden"}
-          className="text-center max-w-2xl mx-auto mb-12"
+          className="text-center max-w-2xl mx-auto mb-14"
         >
-          <motion.p variants={fadeInUp} className="label-eyebrow mb-3">
+          <motion.p variants={fadeInUp} className="label-eyebrow mb-4">
             Contact
           </motion.p>
           <motion.h2
             variants={fadeInUp}
-            className="font-display text-4xl md:text-5xl font-semibold mb-4"
+            className="font-display text-4xl md:text-5xl font-extrabold mb-5 text-[#3D4852]"
           >
             Let's Work Together
           </motion.h2>
-          <motion.p variants={fadeInUp} className="text-muted-foreground leading-[1.7]">
+          <motion.p variants={fadeInUp} className="text-[#6B7280] leading-[1.7]">
             Open to freelance projects, full-time roles, and collaborations. Drop a line — I reply within 24 hours.
           </motion.p>
         </motion.div>
 
-        <div className="max-w-xl mx-auto">
+        <div className="max-w-2xl mx-auto">
           <motion.form
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
             onSubmit={onSubmit}
-            className="space-y-4 mb-10"
+            className="neu-card p-8 md:p-10 space-y-5"
           >
             <input
               required
               type="text"
-              placeholder="Name"
+              placeholder="Your name"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full px-4 py-3 rounded-lg bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 transition-all"
+              className="neu-input"
             />
             <input
               required
               type="email"
-              placeholder="Email"
+              placeholder="Your email"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full px-4 py-3 rounded-lg bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 transition-all"
+              className="neu-input"
             />
             <textarea
               required
               rows={5}
-              placeholder="Message"
+              placeholder="Tell me about your project…"
               value={form.message}
               onChange={(e) => setForm({ ...form, message: e.target.value })}
-              className="w-full px-4 py-3 rounded-lg bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 transition-all resize-none"
+              className="neu-input resize-none"
             />
             <button
               type="submit"
               disabled={sending}
-              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-60"
+              className="neu-btn-primary w-full inline-flex items-center justify-center gap-2 px-6 py-4 text-sm disabled:opacity-60"
             >
               {sending ? "Sending…" : (<><Send size={16} /> Send Message</>)}
             </button>
           </motion.form>
 
-          <div className="flex flex-wrap items-center justify-center gap-6 pt-8 border-t border-border">
+          <div className="flex flex-wrap items-center justify-center gap-4 mt-10">
             <a
               href={`mailto:${data.contact.email}`}
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+              className="neu-chip"
             >
-              <Mail size={16} /> {data.contact.email}
+              <Mail size={14} className="text-[#6C63FF]" /> {data.contact.email}
             </a>
             {data.contact.socials.map((s) => {
               const Icon = iconMap[s.platform] || Github;
               return (
-                <a
-                  key={s.platform}
-                  href={s.url}
-                  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  <Icon size={16} /> {s.platform}
+                <a key={s.platform} href={s.url} className="neu-chip">
+                  <Icon size={14} className="text-[#6C63FF]" /> {s.platform}
                 </a>
               );
             })}

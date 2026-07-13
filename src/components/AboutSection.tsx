@@ -22,37 +22,41 @@ const AboutSection = () => {
           initial="hidden"
           animate={isInView ? "show" : "hidden"}
         >
-          <motion.p variants={fadeInUp} className="label-eyebrow mb-3">
+          <motion.p variants={fadeInUp} className="label-eyebrow mb-4">
             About Me
           </motion.p>
           <motion.h2
             variants={fadeInUp}
-            className="text-3xl md:text-[40px] font-bold mb-8 max-w-2xl"
+            className="font-display text-4xl md:text-5xl font-extrabold mb-10 max-w-2xl text-[#3D4852]"
           >
-            Who I Am
+            Crafting digital experiences with soft precision.
           </motion.h2>
 
-          <motion.p variants={fadeInUp} className="text-base text-muted-foreground leading-[1.7] max-w-3xl mb-4">
-            {about.description}
-          </motion.p>
-          <motion.p variants={fadeInUp} className="text-base text-muted-foreground leading-[1.7] max-w-3xl">
-            {about.expandedDescription}
-          </motion.p>
+          <motion.div variants={fadeInUp} className="neu-card p-8 md:p-12 max-w-4xl">
+            <p className="text-base md:text-lg text-[#3D4852] leading-[1.8] mb-5">
+              {about.description}
+            </p>
+            <p className="text-base md:text-lg text-[#6B7280] leading-[1.8]">
+              {about.expandedDescription}
+            </p>
+          </motion.div>
 
           <motion.div
             variants={staggerContainer}
-            className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-12"
+            className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8 mt-10"
           >
             {displayStats.map((s) => (
               <motion.div
                 key={s.label}
                 variants={fadeInUp}
-                className="surface-card p-6 transition-colors hover:border-primary/60"
+                className="neu-card p-8 text-center"
               >
-                <div className="text-[48px] font-bold text-primary leading-none mb-2">
+                <div className="font-display text-5xl md:text-6xl font-extrabold text-[#6C63FF] leading-none mb-3">
                   {s.value}
                 </div>
-                <div className="text-sm text-muted-foreground">{s.label}</div>
+                <div className="text-sm font-medium text-[#6B7280] uppercase tracking-wider">
+                  {s.label}
+                </div>
               </motion.div>
             ))}
           </motion.div>

@@ -9,13 +9,11 @@ const links = [
 ];
 
 const Navbar = () => {
-  const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("home");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > 20);
       const y = window.scrollY + window.innerHeight / 3;
       let cur = "home";
       for (const l of links) {
@@ -35,28 +33,25 @@ const Navbar = () => {
   };
 
   return (
-    <header
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "backdrop-blur-xl border-b border-border"
-          : "bg-transparent"
-      }`}
-      style={scrolled ? { backgroundColor: "rgba(2, 6, 23, 0.85)" } : undefined}
-    >
-      <nav className="container-narrow flex items-center justify-between h-16 px-6 md:px-10">
+    <header className="fixed top-4 md:top-6 inset-x-0 z-50 px-4 md:px-8">
+      <nav
+        className="container-narrow neu-extrude rounded-full flex items-center justify-between h-16 px-5 md:px-7"
+      >
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="text-xl font-bold tracking-tight text-primary"
+          className="font-display text-xl font-extrabold tracking-tight text-[hsl(var(--foreground))]"
         >
-          ahrion
+          ahrion<span className="text-[#6C63FF]">.</span>
         </button>
 
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-2">
           {links.map((l) => (
             <button
               key={l.id}
               onClick={() => go(l.id)}
-              className={`nav-link relative py-2 ${active === l.id ? "nav-link-active" : ""}`}
+              className={`nav-link px-4 py-2 rounded-full transition-all ${
+                active === l.id ? "nav-link-active neu-inset-sm" : ""
+              }`}
             >
               {l.label}
             </button>
@@ -64,31 +59,36 @@ const Navbar = () => {
         </div>
 
         <button
-          className="md:hidden text-foreground"
+          onClick={() => go("contact")}
+          className="hidden md:inline-flex neu-btn-primary px-5 py-2.5 text-sm"
+        >
+          Hire me
+        </button>
+
+        <button
+          className="md:hidden neu-extrude-sm w-11 h-11 rounded-full flex items-center justify-center text-[hsl(var(--foreground))]"
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
         >
-          {open ? <X size={22} /> : <Menu size={22} />}
+          {open ? <X size={20} /> : <Menu size={20} />}
         </button>
       </nav>
 
-      <div
-        className={`md:hidden fixed inset-y-0 right-0 w-72 bg-card border-l border-border transform transition-transform duration-300 ${
-          open ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <div className="flex flex-col gap-2 pt-20 px-6">
+      {open && (
+        <div className="md:hidden container-narrow mt-3 neu-extrude rounded-3xl p-4 flex flex-col gap-1">
           {links.map((l) => (
             <button
               key={l.id}
               onClick={() => go(l.id)}
-              className={`text-left py-3 nav-link ${active === l.id ? "nav-link-active" : ""}`}
+              className={`text-left px-4 py-3 rounded-2xl nav-link ${
+                active === l.id ? "nav-link-active neu-inset-sm" : ""
+              }`}
             >
               {l.label}
             </button>
           ))}
         </div>
-      </div>
+      )}
     </header>
   );
 };

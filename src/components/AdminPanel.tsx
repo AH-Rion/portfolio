@@ -312,11 +312,12 @@ const ImageUpload = ({ label, value, onChange }: { label: string; value: string;
           </div>
         )}
         <div className="flex flex-col gap-1">
-          <label className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs bg-primary/10 text-primary cursor-pointer hover:bg-primary/20 transition-colors">
+          <label className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs bg-primary/10 text-primary cursor-pointer hover:bg-primary/20 transition-colors ${uploading ? "opacity-60 pointer-events-none" : ""}`}>
             <Upload size={12} />
-            Upload
-            <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+            {uploading ? "Uploading…" : "Upload"}
+            <input type="file" accept="image/*" onChange={handleFileChange} disabled={uploading} className="hidden" />
           </label>
+
           {value && (
             <button onClick={() => onChange("")} className="text-xs text-destructive hover:underline">Remove</button>
           )}

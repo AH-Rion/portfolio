@@ -3,21 +3,28 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Lock, LogOut, Pencil, Eye, Settings, X, RotateCcw, Save, ChevronDown, ChevronRight, Plus, Trash2, Upload, ImageIcon, KeyRound } from "lucide-react";
 import { useAdmin } from "@/contexts/AdminContext";
 import { usePortfolio, PortfolioData } from "@/contexts/PortfolioContext";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const AdminLoginButton = () => {
   const [showLogin, setShowLogin] = useState(false);
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const { login } = useAdmin();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (login(password)) {
+    setLoading(true);
+    const ok = await Promise.resolve(login(email, password));
+    setLoading(false);
+    if (ok) {
       toast.success("Admin access granted!");
       setShowLogin(false);
+      setEmail("");
       setPassword("");
     } else {
-      toast.error("Wrong password");
+      toast.error("Invalid credentials or not an admin");
     }
   };
 
@@ -48,22 +55,32 @@ const AdminLoginButton = () => {
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
               onSubmit={handleSubmit}
-              className="glass rounded-2xl p-8 w-full max-w-sm glow-box"
+              className="glass rounded-2xl p-8 w-full max-w-sm glow-box space-y-3"
             >
-              <h3 className="text-xl font-bold mb-4 gradient-text">Admin Login</h3>
+              <h3 className="text-xl font-bold mb-2 gradient-text">Admin Login</h3>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Admin email"
+                className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
+                autoFocus
+                required
+              />
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter admin password"
-                className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary mb-4"
-                autoFocus
+                placeholder="Password"
+                className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
+                required
               />
               <button
                 type="submit"
-                className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-medium"
+                disabled={loading}
+                className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-medium disabled:opacity-60"
               >
-                Login
+                {loading ? "Signing in…" : "Login"}
               </button>
             </motion.form>
           </motion.div>
@@ -73,27 +90,31 @@ const AdminLoginButton = () => {
   );
 };
 
+
 const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
   const { changePassword } = useAdmin();
-  const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (next.length < 4) {
-      toast.error("New password must be at least 4 characters");
+    if (next.length < 6) {
+      toast.error("New password must be at least 6 characters");
       return;
     }
     if (next !== confirm) {
       toast.error("Passwords don't match");
       return;
     }
-    if (changePassword(current, next)) {
+    setLoading(true);
+    const ok = await Promise.resolve(changePassword("", next));
+    setLoading(false);
+    if (ok) {
       toast.success("Password changed successfully!");
       onClose();
     } else {
-      toast.error("Current password is incorrect");
+      toast.error("Failed to change password");
     }
   };
 
@@ -116,18 +137,11 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
         <h3 className="text-xl font-bold gradient-text mb-2">Change Password</h3>
         <input
           type="password"
-          value={current}
-          onChange={(e) => setCurrent(e.target.value)}
-          placeholder="Current password"
-          className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
-          autoFocus
-        />
-        <input
-          type="password"
           value={next}
           onChange={(e) => setNext(e.target.value)}
-          placeholder="New password (min 4 chars)"
+          placeholder="New password (min 6 chars)"
           className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
+          autoFocus
         />
         <input
           type="password"
@@ -146,18 +160,17 @@ const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
           </button>
           <button
             type="submit"
-            className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-medium"
+            disabled={loading}
+            className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-medium disabled:opacity-60"
           >
-            Update
+            {loading ? "Updating…" : "Update"}
           </button>
         </div>
-        <p className="text-xs text-muted-foreground text-center pt-1">
-          Stored locally in this browser. Default: <code>admin123</code>
-        </p>
       </motion.form>
     </motion.div>
   );
 };
+
 
 const AdminToolbar = () => {
   const { isEditMode, toggleEditMode, logout } = useAdmin();

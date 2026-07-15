@@ -269,17 +269,36 @@ const EditorSection = ({ title, children, defaultOpen = false }: { title: string
 };
 
 const ImageUpload = ({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) => {
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error("Image must be under 2MB");
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be under 5MB");
       return;
     }
-    const reader = new FileReader();
-    reader.onloadend = () => onChange(reader.result as string);
-    reader.readAsDataURL(file);
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "png";
+      const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("portfolio-images")
+        .upload(path, file, { cacheControl: "31536000", upsert: false, contentType: file.type });
+      if (upErr) throw upErr;
+      const { data: signed, error: signErr } = await supabase.storage
+        .from("portfolio-images")
+        .createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
+      if (signErr || !signed) throw signErr || new Error("no url");
+      onChange(signed.signedUrl);
+      toast.success("Image uploaded");
+    } catch (err: any) {
+      toast.error(err?.message || "Upload failed");
+    } finally {
+      setUploading(false);
+    }
   };
+
 
   return (
     <div>

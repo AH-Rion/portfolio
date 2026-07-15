@@ -3,9 +3,17 @@ import { motion } from "framer-motion";
 import { Mail, Github, Linkedin, Twitter, Send } from "lucide-react";
 import useScrollAnimation, { fadeInUp, staggerContainer } from "@/hooks/useScrollAnimation";
 import { usePortfolio } from "@/contexts/PortfolioContext";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { z } from "zod";
 
 const iconMap: Record<string, any> = { GitHub: Github, LinkedIn: Linkedin, Twitter: Twitter, Email: Mail };
+
+const contactSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(100),
+  email: z.string().trim().email("Invalid email").max(255),
+  message: z.string().trim().min(1, "Message is required").max(1000),
+});
 
 const ContactSection = () => {
   const { ref, isInView } = useScrollAnimation(0.15);
@@ -13,15 +21,24 @@ const ContactSection = () => {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [sending, setSending] = useState(false);
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const parsed = contactSchema.safeParse(form);
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]?.message || "Invalid input");
+      return;
+    }
     setSending(true);
-    setTimeout(() => {
-      setSending(false);
-      toast.success("Message sent successfully.");
-      setForm({ name: "", email: "", message: "" });
-    }, 1200);
+    const { error } = await supabase.from("contact_messages").insert(parsed.data);
+    setSending(false);
+    if (error) {
+      toast.error("Failed to send message. Please try again.");
+      return;
+    }
+    toast.success("Message sent successfully.");
+    setForm({ name: "", email: "", message: "" });
   };
+
 
   return (
     <section id="contact" className="section-padding">

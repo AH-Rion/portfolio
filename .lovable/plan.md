@@ -55,5 +55,3 @@ After deploy, you sign up once via the login modal, then I'll run a one-time SQL
 - Realtime is opt-in on the `portfolio_data` table (enabled in migration).
 - Zod schemas added for portfolio JSON write + contact form.
 - Existing localStorage data is not auto-migrated; on first admin save, defaults or your edits become the source of truth in Supabase.
-
-Approve and I'll implement.

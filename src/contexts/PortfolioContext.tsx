@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useRef, ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface PortfolioData {
   profileImage: string;
@@ -150,16 +151,6 @@ const defaultData: PortfolioData = {
   },
 };
 
-const STORAGE_KEY = "portfolio-data";
-
-function loadData(): PortfolioData {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) return { ...defaultData, ...JSON.parse(stored) };
-  } catch {}
-  return defaultData;
-}
-
 interface PortfolioContextType {
   data: PortfolioData;
   updateData: (newData: PortfolioData) => void;
@@ -174,17 +165,61 @@ const PortfolioContext = createContext<PortfolioContextType>({
 
 export const usePortfolio = () => useContext(PortfolioContext);
 
+function mergeWithDefaults(remote: any): PortfolioData {
+  if (!remote || typeof remote !== "object" || Object.keys(remote).length === 0) {
+    return defaultData;
+  }
+  return { ...defaultData, ...remote };
+}
+
 export const PortfolioProvider = ({ children }: { children: ReactNode }) => {
-  const [data, setData] = useState<PortfolioData>(loadData);
+  const [data, setData] = useState<PortfolioData>(defaultData);
+  const saveTimer = useRef<number | null>(null);
+  const skipNextSave = useRef(true);
 
+  // Load initial data
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  }, [data]);
+    supabase
+      .from("portfolio_data")
+      .select("data")
+      .eq("id", "main")
+      .maybeSingle()
+      .then(({ data: row }) => {
+        skipNextSave.current = true;
+        setData(mergeWithDefaults(row?.data));
+      });
 
-  const updateData = (newData: PortfolioData) => setData(newData);
+    const channel = supabase
+      .channel("portfolio_data_changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "portfolio_data", filter: "id=eq.main" },
+        (payload: any) => {
+          if (payload.new?.data) {
+            skipNextSave.current = true;
+            setData(mergeWithDefaults(payload.new.data));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const updateData = (newData: PortfolioData) => {
+    setData(newData);
+    if (saveTimer.current) window.clearTimeout(saveTimer.current);
+    saveTimer.current = window.setTimeout(async () => {
+      await supabase
+        .from("portfolio_data")
+        .upsert({ id: "main", data: newData as any, updated_at: new Date().toISOString() });
+    }, 300);
+  };
+
   const resetData = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    setData(defaultData);
+    updateData(defaultData);
   };
 
   return (

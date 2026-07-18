@@ -8,6 +8,7 @@ import { toast } from "sonner";
 
 const AdminLoginButton = () => {
   const [showLogin, setShowLogin] = useState(false);
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,15 +17,33 @@ const AdminLoginButton = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const ok = await Promise.resolve(login(email, password));
-    setLoading(false);
-    if (ok) {
-      toast.success("Admin access granted!");
-      setShowLogin(false);
-      setEmail("");
-      setPassword("");
-    } else {
-      toast.error("Invalid credentials or not an admin");
+    try {
+      if (mode === "signup") {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: `${window.location.origin}/` },
+        });
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
+        toast.success("Account created. Ask the site owner to grant admin role, then sign in.");
+        setMode("signin");
+        setPassword("");
+        return;
+      }
+      const ok = await Promise.resolve(login(email, password));
+      if (ok) {
+        toast.success("Admin access granted!");
+        setShowLogin(false);
+        setEmail("");
+        setPassword("");
+      } else {
+        toast.error("Invalid credentials or not an admin");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -57,7 +76,9 @@ const AdminLoginButton = () => {
               onSubmit={handleSubmit}
               className="glass rounded-2xl p-8 w-full max-w-sm glow-box space-y-3"
             >
-              <h3 className="text-xl font-bold mb-2 gradient-text">Admin Login</h3>
+              <h3 className="text-xl font-bold mb-2 gradient-text">
+                {mode === "signin" ? "Admin Login" : "Create Account"}
+              </h3>
               <input
                 type="email"
                 value={email}
@@ -71,7 +92,8 @@ const AdminLoginButton = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
+                placeholder={mode === "signup" ? "Password (min 6 chars)" : "Password"}
+                minLength={6}
                 className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
                 required
               />
@@ -80,7 +102,14 @@ const AdminLoginButton = () => {
                 disabled={loading}
                 className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-medium disabled:opacity-60"
               >
-                {loading ? "Signing in…" : "Login"}
+                {loading ? "Please wait…" : mode === "signin" ? "Login" : "Sign up"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+                className="w-full text-xs text-muted-foreground hover:text-primary transition-colors"
+              >
+                {mode === "signin" ? "No account? Sign up" : "Already have an account? Sign in"}
               </button>
             </motion.form>
           </motion.div>

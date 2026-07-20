@@ -179,15 +179,23 @@ export const PortfolioProvider = ({ children }: { children: ReactNode }) => {
 
   // Load initial data
   useEffect(() => {
-    supabase
-      .from("portfolio_data")
-      .select("data")
-      .eq("id", "main")
-      .maybeSingle()
-      .then(({ data: row }) => {
-        skipNextSave.current = true;
-        setData(mergeWithDefaults(row?.data));
-      });
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data: row, error } = await supabase
+          .from("portfolio_data")
+          .select("data")
+          .eq("id", "main")
+          .maybeSingle();
+        if (error) console.error("[portfolio] load failed", error);
+        if (!cancelled) {
+          skipNextSave.current = true;
+          setData(mergeWithDefaults(row?.data));
+        }
+      } catch (e) {
+        console.error("[portfolio] load threw", e);
+      }
+    })();
 
     const channel = supabase
       .channel("portfolio_data_changes")
@@ -204,6 +212,7 @@ export const PortfolioProvider = ({ children }: { children: ReactNode }) => {
       .subscribe();
 
     return () => {
+      cancelled = true;
       supabase.removeChannel(channel);
     };
   }, []);
@@ -212,11 +221,17 @@ export const PortfolioProvider = ({ children }: { children: ReactNode }) => {
     setData(newData);
     if (saveTimer.current) window.clearTimeout(saveTimer.current);
     saveTimer.current = window.setTimeout(async () => {
-      await supabase
-        .from("portfolio_data")
-        .upsert({ id: "main", data: newData as any, updated_at: new Date().toISOString() });
+      try {
+        const { error } = await supabase
+          .from("portfolio_data")
+          .upsert({ id: "main", data: newData as any, updated_at: new Date().toISOString() });
+        if (error) console.error("[portfolio] save failed", error);
+      } catch (e) {
+        console.error("[portfolio] save threw", e);
+      }
     }, 300);
   };
+
 
   const resetData = () => {
     updateData(defaultData);

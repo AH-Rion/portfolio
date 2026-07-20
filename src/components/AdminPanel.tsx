@@ -33,14 +33,14 @@ const AdminLoginButton = () => {
         setPassword("");
         return;
       }
-      const ok = await Promise.resolve(login(email, password));
-      if (ok) {
+      const result = await login(email, password);
+      if (result.ok) {
         toast.success("Admin access granted!");
         setShowLogin(false);
         setEmail("");
         setPassword("");
       } else {
-        toast.error("Invalid credentials or not an admin");
+        toast.error(result.error);
       }
     } finally {
       setLoading(false);

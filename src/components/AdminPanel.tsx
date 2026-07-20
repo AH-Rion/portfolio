@@ -34,13 +34,13 @@ const AdminLoginButton = () => {
         return;
       }
       const result = await login(email, password);
-      if (result.ok) {
+      if (result.ok === true) {
         toast.success("Admin access granted!");
         setShowLogin(false);
         setEmail("");
         setPassword("");
       } else {
-        toast.error(result.ok ? "" : result.error);
+        toast.error(result.error || "Login failed");
       }
     } finally {
       setLoading(false);

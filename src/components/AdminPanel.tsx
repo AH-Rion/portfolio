@@ -40,7 +40,7 @@ const AdminLoginButton = () => {
         setEmail("");
         setPassword("");
       } else {
-        toast.error(result.error);
+        toast.error(result.ok ? "" : result.error);
       }
     } finally {
       setLoading(false);

@@ -11,7 +11,7 @@ const HeroSection = () => {
       id="home"
       className="relative min-h-screen flex items-center pt-32 pb-20 px-6 md:px-10"
     >
-      <div className="container-narrow w-full grid lg:grid-cols-[1.15fr_1fr] gap-16 items-center">
+      <div className="container-narrow w-full grid lg:grid-cols-[1.15fr_1fr] gap-10 lg:gap-16 items-center">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -65,19 +65,20 @@ const HeroSection = () => {
           initial={{ opacity: 0, scale: 0.94 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
-          className="relative flex items-center justify-center min-h-[420px]"
+          className="relative flex items-center justify-center min-h-[320px] sm:min-h-[380px] lg:min-h-[420px]"
         >
-          {/* Nested depth circles */}
-          <div className="neu-extrude rounded-full w-[380px] h-[380px] flex items-center justify-center">
-            <div className="neu-inset-deep rounded-full w-[300px] h-[300px] flex items-center justify-center">
+          {/* Nested depth circles — responsive */}
+          <div className="neu-extrude rounded-full w-[260px] h-[260px] sm:w-[320px] sm:h-[320px] lg:w-[380px] lg:h-[380px] flex items-center justify-center">
+            <div className="neu-inset-deep rounded-full w-[200px] h-[200px] sm:w-[250px] sm:h-[250px] lg:w-[300px] lg:h-[300px] flex items-center justify-center">
               <div
-                className="neu-extrude rounded-full w-[240px] h-[240px] overflow-hidden flex items-center justify-center text-6xl font-display font-extrabold text-[#6C63FF] relative"
+                className="neu-extrude rounded-full w-[160px] h-[160px] sm:w-[200px] sm:h-[200px] lg:w-[240px] lg:h-[240px] overflow-hidden flex items-center justify-center text-5xl lg:text-6xl font-display font-extrabold text-[#6C63FF] relative"
               >
                 {hero.initials}
                 <img
                   src={data.profileImage || "/images/profile.jpg"}
                   alt={`${hero.name} profile`}
                   loading="lazy"
+                  decoding="async"
                   onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
                   className="absolute inset-0 w-full h-full object-cover rounded-full"
                 />

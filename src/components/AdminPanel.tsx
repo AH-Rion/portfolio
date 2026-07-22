@@ -309,19 +309,28 @@ const ImageUpload = ({ label, value, onChange }: { label: string; value: string;
     }
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop() || "png";
+      const { data: sess } = await supabase.auth.getSession();
+      if (!sess.session) throw new Error("You must be logged in as admin to upload.");
+      const ext = (file.name.split(".").pop() || "png").toLowerCase();
       const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
       const { error: upErr } = await supabase.storage
         .from("portfolio-images")
         .upload(path, file, { cacheControl: "31536000", upsert: false, contentType: file.type });
-      if (upErr) throw upErr;
+      if (upErr) {
+        console.error("[upload] storage error", upErr);
+        throw new Error(upErr.message || "Storage upload failed");
+      }
       const { data: signed, error: signErr } = await supabase.storage
         .from("portfolio-images")
         .createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
-      if (signErr || !signed) throw signErr || new Error("no url");
+      if (signErr || !signed?.signedUrl) {
+        console.error("[upload] sign error", signErr);
+        throw new Error(signErr?.message || "Could not create image URL");
+      }
       onChange(signed.signedUrl);
       toast.success("Image uploaded");
     } catch (err: any) {
+      console.error("[upload] failed", err);
       toast.error(err?.message || "Upload failed");
     } finally {
       setUploading(false);

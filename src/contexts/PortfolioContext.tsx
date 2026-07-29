@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useRef, ReactNode } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { hasSupabaseEnv, supabase } from "@/integrations/supabase/client";
 
 export interface PortfolioData {
   profileImage: string;
@@ -179,6 +179,11 @@ export const PortfolioProvider = ({ children }: { children: ReactNode }) => {
 
   // Load initial data
   useEffect(() => {
+    if (!hasSupabaseEnv) {
+      setData(defaultData);
+      return;
+    }
+
     let cancelled = false;
     (async () => {
       try {
@@ -219,6 +224,7 @@ export const PortfolioProvider = ({ children }: { children: ReactNode }) => {
 
   const updateData = (newData: PortfolioData) => {
     setData(newData);
+    if (!hasSupabaseEnv) return;
     if (saveTimer.current) window.clearTimeout(saveTimer.current);
     saveTimer.current = window.setTimeout(async () => {
       try {

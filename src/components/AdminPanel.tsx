@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Lock, LogOut, Pencil, Eye, Settings, X, RotateCcw, Save, ChevronDown, ChevronRight, Plus, Trash2, Upload, ImageIcon, KeyRound } from "lucide-react";
 import { useAdmin } from "@/contexts/AdminContext";
 import { usePortfolio, PortfolioData } from "@/contexts/PortfolioContext";
-import { supabase } from "@/integrations/supabase/client";
+import { hasSupabaseEnv, supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const AdminLoginButton = () => {
@@ -16,6 +16,10 @@ const AdminLoginButton = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!hasSupabaseEnv) {
+      toast.error("Supabase env vars are missing. Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY.");
+      return;
+    }
     setLoading(true);
     try {
       if (mode === "signup") {
@@ -314,6 +318,11 @@ const ImageUpload = ({ label, value, onChange }: { label: string; value: string;
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!hasSupabaseEnv) {
+      toast.error("Supabase env vars are missing. Image upload is disabled.");
+      e.target.value = "";
+      return;
+    }
     if (file.size > 5 * 1024 * 1024) {
       toast.error("Image must be under 5MB");
       return;

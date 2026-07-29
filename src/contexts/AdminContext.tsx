@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { hasSupabaseEnv, supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 
 export type LoginResult = { ok: true } | { ok: false; error: string };
@@ -27,6 +27,7 @@ const AdminContext = createContext<AdminContextType>({
 export const useAdmin = () => useContext(AdminContext);
 
 async function checkAdmin(userId: string): Promise<boolean> {
+  if (!hasSupabaseEnv) return false;
   try {
     const { data, error } = await supabase
       .from("user_roles")
@@ -51,6 +52,12 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
+    if (!hasSupabaseEnv) {
+      setIsAdmin(false);
+      setIsEditMode(false);
+      return;
+    }
+
     const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
       setSession(s);
       if (s?.user) {

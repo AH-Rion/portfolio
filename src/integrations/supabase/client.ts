@@ -4,6 +4,16 @@ import type { Database } from './types';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const hasSupabaseEnv = Boolean(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY);
+const fallbackSupabaseUrl = "https://example.supabase.co";
+const fallbackSupabasePublishableKey = "sb_publishable_placeholder";
+
+if (!hasSupabaseEnv) {
+  console.error(
+    "[supabase] Missing VITE_SUPABASE_URL or VITE_SUPABASE_PUBLISHABLE_KEY. " +
+      "Set both env vars in your deploy platform to enable backend features."
+  );
+}
 
 
 function isNewSupabaseApiKey(value: string): boolean {
@@ -33,13 +43,19 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+export const supabase = createClient<Database>(
+  hasSupabaseEnv ? SUPABASE_URL : fallbackSupabaseUrl,
+  hasSupabaseEnv ? SUPABASE_PUBLISHABLE_KEY : fallbackSupabasePublishableKey,
+  {
   global: {
-    fetch: createSupabaseFetch(SUPABASE_PUBLISHABLE_KEY),
+    fetch: createSupabaseFetch(
+      hasSupabaseEnv ? SUPABASE_PUBLISHABLE_KEY : fallbackSupabasePublishableKey
+    ),
   },
   auth: {
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
   }
-});
+}
+);

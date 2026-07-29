@@ -297,6 +297,17 @@ const EditorSection = ({ title, children, defaultOpen = false }: { title: string
   );
 };
 
+const withCacheBuster = (url: string, version: string | number = Date.now()) => {
+  try {
+    const parsed = new URL(url);
+    parsed.searchParams.set("v", String(version));
+    return parsed.toString();
+  } catch {
+    const sep = url.includes("?") ? "&" : "?";
+    return `${url}${sep}v=${encodeURIComponent(String(version))}`;
+  }
+};
+
 const ImageUpload = ({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) => {
   const [uploading, setUploading] = useState(false);
 
@@ -315,7 +326,7 @@ const ImageUpload = ({ label, value, onChange }: { label: string; value: string;
       const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
       const { error: upErr } = await supabase.storage
         .from("portfolio-images")
-        .upload(path, file, { cacheControl: "31536000", upsert: false, contentType: file.type });
+        .upload(path, file, { cacheControl: "60", upsert: false, contentType: file.type });
       if (upErr) {
         console.error("[upload] storage error", upErr);
         throw new Error(upErr.message || "Storage upload failed");
@@ -327,13 +338,14 @@ const ImageUpload = ({ label, value, onChange }: { label: string; value: string;
         console.error("[upload] sign error", signErr);
         throw new Error(signErr?.message || "Could not create image URL");
       }
-      onChange(signed.signedUrl);
+      onChange(withCacheBuster(signed.signedUrl));
       toast.success("Image uploaded");
     } catch (err: any) {
       console.error("[upload] failed", err);
       toast.error(err?.message || "Upload failed");
     } finally {
       setUploading(false);
+      e.target.value = "";
     }
   };
 
@@ -401,7 +413,7 @@ const FullEditorPanel = ({ onClose }: { onClose: () => void }) => {
   const { data, updateData, resetData } = usePortfolio();
   const [draft, setDraft] = useState<PortfolioData>(JSON.parse(JSON.stringify(data)));
 
-  const update = (path: string, value: any) => {
+  const update = (path: string, value: any): PortfolioData => {
     const newDraft = JSON.parse(JSON.stringify(draft));
     const keys = path.split(".");
     let obj = newDraft;
@@ -410,6 +422,7 @@ const FullEditorPanel = ({ onClose }: { onClose: () => void }) => {
     }
     obj[keys[keys.length - 1]] = value;
     setDraft(newDraft);
+    return newDraft;
   };
 
   const save = () => {
@@ -470,7 +483,14 @@ const FullEditorPanel = ({ onClose }: { onClose: () => void }) => {
         <div className="p-4 space-y-3">
           {/* Profile Image */}
           <EditorSection title="📸 Profile Photo" defaultOpen>
-            <ImageUpload label="Profile Photo (used in Hero & About)" value={draft.profileImage} onChange={(v) => update("profileImage", v)} />
+            <ImageUpload
+              label="Profile Photo (used in Hero & About)"
+              value={draft.profileImage}
+              onChange={(v) => {
+                const next = update("profileImage", v);
+                updateData(next);
+              }}
+            />
           </EditorSection>
 
           {/* Hero */}
